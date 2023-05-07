@@ -3,10 +3,17 @@ import {createRoot} from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import {BrowserRouter as Router} from "react-router-dom";
+import {ThemeProvider} from "styled-components";
+import theme from "./theme"
 
 createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <App/>
+        <Router>
+            <ThemeProvider theme={theme}>
+                <App/>
+            </ThemeProvider>
+        </Router>
     </React.StrictMode>
 );
 

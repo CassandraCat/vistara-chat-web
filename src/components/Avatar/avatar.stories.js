@@ -7,7 +7,7 @@ import face3 from "assets/images/face-male-3.jpg";
 import face4 from "assets/images/face-male-4.jpg";
 
 export default {
-    title: "Vistara/Avatar",
+    title: "Vistara/UI组件/Avatar",
     component: Avatar,
 };
 

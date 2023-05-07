@@ -1,15 +1,15 @@
-import styled, { css } from "styled-components";
-import { circle } from "utils/mixins";
+import styled, {css} from "styled-components";
+import {circle} from "utils/mixins";
 
 const circleMixinFunc = (color, size = "8px") => css`
-  content: "";
-  display: block;
-  position: absolute;
-  ${circle(color, size)}
+    content: "";
+    display: block;
+    position: absolute;
+    ${circle(color, size)}
 `;
 
 const StyledAvatar = styled.div`
-  position: relative;
+    position: relative;
 `;
 
 const StatusIcon = styled.div`
@@ -35,18 +35,18 @@ const StatusIcon = styled.div`
 `;
 
 const AvatarClip = styled.div`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  border-radius: 50%;
-  overflow: hidden;
+    width: ${({size}) => size};
+    height: ${({size}) => size};
+    border-radius: 50%;
+    overflow: hidden;
 `;
 
 const AvatarImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 `;
 
 export default StyledAvatar;
-export { StatusIcon, AvatarClip, AvatarImage };
+export {StatusIcon, AvatarClip, AvatarImage};
