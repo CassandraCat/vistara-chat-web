@@ -8,7 +8,7 @@ import face4 from "assets/images/face-female-2.jpg";
 import face6 from "assets/images/face-female-3.jpg";
 import face8 from "assets/images/face-female-4.jpg";
 
-export default [
+const contactsData = [
     {
         id: 1,
         avatar: face1,
@@ -74,3 +74,5 @@ export default [
         statusText: "离线",
     },
 ];
+
+export default contactsData

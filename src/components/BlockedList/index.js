@@ -10,7 +10,6 @@ import StyledBlockedList, {
 } from "./style";
 import {ReactComponent as ArrowMenuLeft} from "assets/icons/arrowMenuLeft.svg";
 import {ReactComponent as closeCircle} from "assets/icons/closeCircle.svg";
-import face from "assets/images/face-male-1.jpg";
 import "styled-components/macro";
 import Icon from "components/Icon";
 import Text from "components/Text";

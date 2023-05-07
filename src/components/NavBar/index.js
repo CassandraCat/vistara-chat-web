@@ -7,11 +7,10 @@ import Avatar from "components/Avatar";
 import profileImage from "assets/images/face-male-1.jpg";
 import {
     faCommentDots,
-    faUsers,
     faFolder,
     faStickyNote,
     faEllipsisH,
-    faCog,
+    faCog, faUserGroup, faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "styled-components/macro";
@@ -23,7 +22,8 @@ function NavBar({...rest}) {
             <Avatar src={profileImage} status="online"/>
             <MenuItems>
                 <MenuItem to="/" showBadge icon={faCommentDots}/>
-                <MenuItem to="/contacts" icon={faUsers}/>
+                <MenuItem to="/contacts" icon={faUser}/>
+                <MenuItem to="/groups" icon={faUserGroup}/>
                 <MenuItem to="/files" icon={faFolder}/>
                 <MenuItem to="/notes" icon={faStickyNote}/>
                 <MenuItem icon={faEllipsisH}/>

@@ -1,4 +1,4 @@
-export default [
+const fileData = [
     {
         id: 1,
         name: "Source Code.zip",
@@ -49,3 +49,5 @@ export default [
         updatedAt: "2019年12月13日",
     },
 ];
+
+export default fileData

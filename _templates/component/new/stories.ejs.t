@@ -1,5 +1,3 @@
-use strict;
-use warnings FATAL => 'all';
 ---
 to: src/components/<%= name %>/<%= h.changeCase.lcFirst(name) %>.stories.js
 ---

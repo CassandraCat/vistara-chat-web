@@ -1,5 +1,3 @@
-use warnings FATAL => 'all';
-use strict;
 ---
 to: src/components/<%= name %>/style.js
 ---

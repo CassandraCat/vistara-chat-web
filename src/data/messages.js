@@ -6,7 +6,7 @@ import face2 from "assets/images/face-female-1.jpg";
 import face4 from "assets/images/face-female-2.jpg";
 import face6 from "assets/images/face-female-3.jpg";
 
-export default [
+const messageData = [
     {
         id: 1,
         avatarSrc: face1,
@@ -74,3 +74,5 @@ export default [
         replied: true,
     },
 ];
+
+export default messageData

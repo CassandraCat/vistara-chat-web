@@ -31,7 +31,7 @@ function MessageList({children, ...rest}) {
                         <animated.div key={message.id} style={trailAnimes[index]}>
                             <MessageCard
                                 key={message.id}
-                                active={index === 3}
+                                active={index === 2}
                                 replied={message.replied}
                                 avatarSrc={message.avatarSrc}
                                 name={message.name}

@@ -38,6 +38,7 @@ function ChatApp({children, ...rest}) {
                         <Routes location={item}>
                             <Route path="/" element={<MessageList/>}/>
                             <Route path="/contacts" element={<ContactList/>}/>
+                            <Route path="/groups" element={<ContactList/>}/>
                             <Route path="/files" element={<FileList/>}/>
                             <Route path="/notes" element={<NoteList/>}/>
                             <Route path="/settings/*" element={<EditProfile/>}/>

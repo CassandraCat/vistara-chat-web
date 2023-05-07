@@ -8,7 +8,7 @@ import face4 from "assets/images/face-female-2.jpg";
 import face6 from "assets/images/face-female-3.jpg";
 import face8 from "assets/images/face-female-4.jpg";
 
-export default [
+const blockedData =  [
     {
         id: 1,
         avatar: face1,
@@ -50,3 +50,5 @@ export default [
         name: "赵子枫",
     },
 ];
+
+export default blockedData
