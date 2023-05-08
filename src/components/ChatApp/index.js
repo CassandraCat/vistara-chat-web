@@ -5,7 +5,7 @@ import NavBar from "components/NavBar";
 import MessageList from "components/MessageList";
 import Conversation from "components/Conversation";
 import Profile from "components/Profile";
-import {Route, Routes, useLocation} from "react-router-dom";
+import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import ContactList from "components/ContactList";
 import FileList from "components/FileList";
 import NoteList from "components/NoteList";
@@ -14,8 +14,16 @@ import Settings from "components/Settings";
 import BlockedList from "components/BlockedList";
 import VideoCall from "components/VideoCall";
 import {useTransition, animated} from "react-spring";
+import {useSdk} from "../../sdk/SdkContext";
+import {useAuth} from "../../guard/AuthProvider";
 
 function ChatApp({children, ...rest}) {
+
+    const {user} = useAuth();
+    console.log(user)
+
+
+
     const [showDrawer, setShowDrawer] = useState(false);
     const [videoCalling, setVideoCalling] = useState(false);
 
@@ -26,6 +34,10 @@ function ChatApp({children, ...rest}) {
         enter: {opacity: 1, transform: "translate3d(0, 0, 0)"},
         leave: {opacity: 0, transform: "translate3d(-100px, 0, 1)"},
     });
+
+    if (!user) {
+        return <Navigate to={'/login'}></Navigate>
+    }
 
     return (
         <StyledChatApp {...rest}>

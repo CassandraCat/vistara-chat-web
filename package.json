@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
     "@fortawesome/free-brands-svg-icons": "^6.1.2",
     "@fortawesome/free-regular-svg-icons": "^6.1.2",
@@ -20,7 +21,9 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "react-spring": "^9.5.2",
-    "styled-components": "^5.3.5"
+    "react-tsparticles": "^2.9.3",
+    "styled-components": "^5.3.5",
+    "tsparticles": "^2.9.3"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -6,12 +6,19 @@ import * as serviceWorker from "./serviceWorker";
 import {BrowserRouter as Router} from "react-router-dom";
 import {ThemeProvider} from "styled-components";
 import theme from "./theme"
+import {AuthProvider} from "./guard/AuthProvider";
+import {SdkProvider} from "./sdk/SdkContext";
+
 
 createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <Router>
             <ThemeProvider theme={theme}>
-                <App/>
+                <AuthProvider>
+                    <SdkProvider>
+                        <App/>
+                    </SdkProvider>
+                </AuthProvider>
             </ThemeProvider>
         </Router>
     </React.StrictMode>
