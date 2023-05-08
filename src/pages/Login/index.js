@@ -2,19 +2,77 @@ import React from "react";
 import PropTypes from "prop-types";
 import StyledLogin, {StyledContainer, StyledLoginTitle} from "./style";
 import {useAuth} from "guard/AuthProvider";
-import {Button, Form, Input} from "antd";
+import {Button, Form, Input, message} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import Particles from "react-tsparticles";
 import {loadFull} from "tsparticles";
+import {useUserLoginMutation} from "../../store/festures/api/userApiSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {modify, modifyUserSession} from "../../store/festures/user/userSessionSlice";
+import {useSdk} from "../../sdk/SdkContext";
+import {modifyUserInfo} from "../../store/festures/user/userInfoSlice";
 
 function Login({children, ...rest}) {
 
-
+    const [userLogin] = useUserLoginMutation()
     const {login} = useAuth()
+    const userSession = useSelector(state => state.userSession)
+    const dispatch = useDispatch()
+    const im = useSdk()
 
+    const ListenerMap = {
+        onSocketConnectEvent: (option, status, data) => {
+            console.log("已建立连接:" + JSON.stringify(status));
+        },
+        onSocketErrorEvent: (error) => {
+            console.log("连接出现错误:");
+        },
+        onSocketReConnectEvent: () => {
+            console.log("正在重连:");
+        },
+        onSocketCloseEvent: () => {
+            console.log("连接关闭:");
+        }, onSocketReConnectSuccessEvent: () => {
+            console.log("重连成功");
+        },
+        onTestMessage: (e) => {
+            console.log("onTestMessage ：" + e);
+        },
+        onLogin: (uid) => {
+            console.log("用户" + uid + "登陆sdk成功");
+        }
+    }
 
-    const onFinish = () => {
-
+    const onFinish = value => {
+        const userAccountInfo = {
+            userName: value.username,
+            password: value.password,
+            loginType: 1
+        }
+        userLogin(userAccountInfo).then((result) => {
+            const data = result.data
+            if (data.code === 200) {
+                const listeners = {...ListenerMap}
+                im.init(data.data.appId, data.data.userId, data.data.imUserSign, listeners, (sdk) => {
+                    if (sdk) {
+                        console.log('sdk 成功连接的回调, 可以使用 sdk 请求数据了...');
+                        sdk.getSingleUserInfo().then((result) => {
+                            dispatch(modifyUserInfo(result.data))
+                        }).catch((error) => {
+                            throw new Error(error)
+                        })
+                        login(data.data)
+                        dispatch(modifyUserSession(data.data))
+                    } else {
+                        console.log('sdk 初始化失败...');
+                    }
+                })
+            } else {
+                message.error('用户名或密码错误')
+            }
+        }).catch((error) => {
+            throw new Error(error)
+        })
     }
 
     const particlesInit = async (main) => {

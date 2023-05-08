@@ -8,6 +8,8 @@ import {ThemeProvider} from "styled-components";
 import theme from "./theme"
 import {AuthProvider} from "./guard/AuthProvider";
 import {SdkProvider} from "./sdk/SdkContext";
+import {Provider} from "react-redux";
+import store from "./store";
 
 
 createRoot(document.getElementById("root")).render(
@@ -16,7 +18,9 @@ createRoot(document.getElementById("root")).render(
             <ThemeProvider theme={theme}>
                 <AuthProvider>
                     <SdkProvider>
-                        <App/>
+                        <Provider store={store}>
+                            <App/>
+                        </Provider>
                     </SdkProvider>
                 </AuthProvider>
             </ThemeProvider>
