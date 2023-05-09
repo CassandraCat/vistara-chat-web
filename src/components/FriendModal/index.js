@@ -3,15 +3,25 @@ import PropTypes from "prop-types";
 import StyledFriendModal, {StyledFriendButton} from "./style";
 import Avatar from "../Avatar";
 import Text from "../Text"
-import face from "assets/images/face-female-2.jpg";
+import face from "assets/images/face-male-2.jpg";
 import {Button, Tooltip} from "antd";
 import {MessageTwoTone, PhoneTwoTone, VideoCameraTwoTone} from "@ant-design/icons";
+import {useNavigate} from "react-router-dom";
+import PubSub from "pubsub-js";
 
 
 function FriendModal({children, ...rest}) {
 
     const {friendModalInfo} = {...rest}
 
+    const navigate = useNavigate()
+
+    const navigateToMessage = () => {
+        PubSub.publish('addConversation', friendModalInfo)
+        navigate('/', {
+            replace: true
+        })
+    }
 
     return (
         <StyledFriendModal {...rest}>
@@ -36,7 +46,9 @@ function FriendModal({children, ...rest}) {
                 <Tooltip title="message">
                     <Button shape="circle" size={"large"}
                             icon={<MessageTwoTone style={{fontSize: "28px", color: "#4F9DDE"}}
-                                                  twoToneColor={"#4F9DDE"}/>}/>
+                                                  twoToneColor={"#4F9DDE"}/>}
+                            onClick={navigateToMessage}
+                    />
                 </Tooltip>
             </StyledFriendButton>
         </StyledFriendModal>

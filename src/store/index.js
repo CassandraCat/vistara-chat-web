@@ -2,6 +2,7 @@ import {combineReducers, configureStore, getDefaultMiddleware} from "@reduxjs/to
 import {userApiSlice} from "./festures/api/userApiSlice";
 import userSessionReducer from "./festures/user/userSessionSlice"
 import userInfoReducer from "./festures/user/userInfoSlice"
+import friendListReducer from './festures/Friend/friendListSlice'
 import {
     persistStore,
     persistReducer,
@@ -18,7 +19,7 @@ const persistConfig = {
     key: 'root',
     storage,
     // 指定哪些reducer数据持久化
-    whitelist: ['userSession','userInfo'],
+    whitelist: ['userSession', 'userInfo', 'friendList'],
 }
 
 const persistedReducer = persistReducer(
@@ -26,7 +27,8 @@ const persistedReducer = persistReducer(
     combineReducers({
         [userApiSlice.reducerPath]: userApiSlice.reducer,
         userSession: userSessionReducer,
-        userInfo: userInfoReducer
+        userInfo: userInfoReducer,
+        friendList: friendListReducer
     }),
 )
 

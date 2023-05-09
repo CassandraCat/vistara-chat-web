@@ -15,23 +15,21 @@ import {AliveScope} from "react-activation";
 
 
 createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <Router>
-            <ThemeProvider theme={theme}>
-                <AuthProvider>
-                    <SdkProvider>
-                        <Provider store={store}>
-                            <PersistGate loading={null} persistor={persistor}>
-                                <AliveScope>
-                                    <App/>
-                                </AliveScope>
-                            </PersistGate>
-                        </Provider>
-                    </SdkProvider>
-                </AuthProvider>
-            </ThemeProvider>
-        </Router>
-    </React.StrictMode>
+    <Router>
+        <ThemeProvider theme={theme}>
+            <AuthProvider>
+                <SdkProvider>
+                    <Provider store={store}>
+                        <PersistGate loading={null} persistor={persistor}>
+                            <AliveScope>
+                                <App/>
+                            </AliveScope>
+                        </PersistGate>
+                    </Provider>
+                </SdkProvider>
+            </AuthProvider>
+        </ThemeProvider>
+    </Router>
 );
 
 // If you want your app to work offline and load faster, you can change

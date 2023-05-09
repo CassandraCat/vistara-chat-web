@@ -21,6 +21,7 @@ function FilterList({
 
     const clickHandler = () => {
         PubSub.publish("open", true)
+        PubSub.publish("closeFriendModal", false)
     }
 
     return (

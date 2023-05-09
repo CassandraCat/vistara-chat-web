@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledContactList, {Contacts, StyledText} from "./style";
 import FilterList from "components/FilterList";
@@ -6,35 +6,62 @@ import ContactCard from "components/ContactCard";
 import useStaggeredList from "hooks/useStaggeredList";
 import Text from "components/Text";
 import {animated} from "react-spring";
-
-import contactsData from "data/contacts";
+import _ from "lodash"
 import {useSdk} from "../../sdk/SdkContext";
 import PubSub from "pubsub-js";
+import {useDispatch, useSelector} from "react-redux";
+import {syncFriendList} from "../../store/festures/Friend/friendListSlice";
 
 function ContactList({children, ...rest}) {
+
+    console.log('我重新渲染了!!!!!!!!')
+
     const trailAnimes = useStaggeredList(10);
 
-    const [contacts, setContacts] = useState([])
+    const friendList = useSelector(state => state.friendList)
+
+    const [contacts, setContacts] = useState(friendList)
 
     const im = useSdk()
 
     let friendSequence = window.localStorage.getItem("friendSequence")
 
+    const dispatch = useDispatch()
+
+
     useEffect(() => {
+
         PubSub.subscribe("addFriend", (_, data) => {
             setContacts(prevState => [...prevState, data])
         })
+
         if (friendSequence === null) {
             friendSequence = 0
             window.localStorage.setItem("friendSequence", friendSequence)
         }
         im.syncFriendshipList(friendSequence, 100).then((result) => {
-            setContacts(result.data.dataList)
-            window.localStorage.setItem("friendSequence",result.data.maxSequence)
+            if (result.data.maxSequence != null) {
+                friendSequence = result.data.maxSequence
+                window.localStorage.setItem("friendSequence", friendSequence)
+            }
+            if (result.data.dataList != null) {
+                friendList.forEach(friend => {
+                    result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
+                })
+                setTimeout(() => {
+                    dispatch(syncFriendList(result.data.dataList))
+                }, 0)
+                setContacts(prevState => [...prevState, ...result.data.dataList])
+            }
         }).catch((error) => {
             throw new Error(error)
         })
-    }, [])
+
+        return () => {
+            console.log('我执行了！！！！！！！')
+        }
+
+    }, [friendSequence])
 
     return (
         <StyledContactList {...rest}>
@@ -60,4 +87,4 @@ ContactList.propTypes = {
     children: PropTypes.any,
 };
 
-export default ContactList;
+export default React.memo(ContactList);

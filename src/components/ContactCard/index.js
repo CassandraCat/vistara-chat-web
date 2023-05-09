@@ -21,6 +21,7 @@ function ContactCard({contact, children, ...rest}) {
 
     const transformInfo = () => {
         PubSub.publish("friendModalInfo", contactInfo)
+        PubSub.publish("close", false)
     }
 
     return (

@@ -26,7 +26,11 @@ function MessageList({children, ...rest}) {
     }
 
     useEffect(() => {
-
+        PubSub.subscribe("addConversation", (_, data) => {
+            if (data != null) {
+                setConversationList(prevState => [...prevState, data])
+            }
+        })
     }, [])
 
 

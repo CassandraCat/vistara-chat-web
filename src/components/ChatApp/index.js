@@ -47,7 +47,18 @@ function ChatApp({children, ...rest}) {
         location.pathname
     )
 
+    const isContactList = !!matchPath(
+        {
+            path: "/contacts",
+            end: true,
+        },
+        location.pathname
+    )
+
     useEffect(() => {
+
+        console.log('我重新执行了！！！！！！')
+
         PubSub.subscribe("showMessage", (_, data) => {
             setShowConversation(data)
         })
@@ -66,12 +77,19 @@ function ChatApp({children, ...rest}) {
                 setFriendModalInfo(data)
             }
         })
+        PubSub.subscribe("closeFriendModal", (_, data) => {
+            setIsShowFriendModal(data)
+        })
         if (!isMessageList) {
             setShowConversation(false)
-            setIsShowFriendModal(false)
         }
 
-    }, [isMessageList])
+        if (isContactList) {
+            setIsShowFriendModal(false)
+            setIsSearch(false)
+        }
+
+    }, [isMessageList, isContactList])
 
     if (!user) {
         return <Navigate to={'/login'}></Navigate>
@@ -83,18 +101,18 @@ function ChatApp({children, ...rest}) {
                 <NavBar/>
             </Nav>
             <Sidebar>
-                {transitions(({item, props}) => (
-                    <animated.div style={props}>
-                        <Routes location={item}>
-                            <Route path="/" element={<MessageList/>}/>
-                            <Route path="/contacts" element={<ContactList/>}/>
-                            <Route path="/groups" element={<ContactList/>}/>
-                            <Route path="/files" element={<FileList/>}/>
-                            <Route path="/notes" element={<NoteList/>}/>
-                            <Route path="/settings/*" element={<EditProfile/>}/>
-                        </Routes>
-                    </animated.div>
-                ))}
+                {/*{transitions(({item, props}) => (*/}
+                {/*    <animated.div style={props}>*/}
+                <Routes>
+                    <Route path="/" element={<MessageList/>}/>
+                    <Route path="/contacts" element={<ContactList/>}/>
+                    <Route path="/groups" element={<ContactList/>}/>
+                    <Route path="/files" element={<FileList/>}/>
+                    <Route path="/notes" element={<NoteList/>}/>
+                    <Route path="/settings/*" element={<EditProfile/>}/>
+                </Routes>
+                {/*    </animated.div>*/}
+                {/*))}*/}
             </Sidebar>
             <Content>
                 {videoCalling && (
@@ -110,13 +128,13 @@ function ChatApp({children, ...rest}) {
                 }
 
                 {
-                    isSearch && (
+                    isSearch && isContactList && (
                         <Add></Add>
                     )
                 }
 
                 {
-                    isShowFriendModal && (
+                    isShowFriendModal && isContactList && (
                         <FriendModal friendModalInfo={friendModalInfo}/>
                     )
                 }
@@ -137,4 +155,4 @@ ChatApp.propTypes = {
     children: PropTypes.any,
 };
 
-export default ChatApp;
+export default React.memo(ChatApp);
