@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import StyledTitleBar, {Actions, Title} from "./style";
 
-import face from "assets/images/face-male-3.jpg";
+import face from "assets/images/face-male-2.jpg";
 
 import {ReactComponent as Call} from "assets/icons/call.svg";
 import {ReactComponent as Camera} from "assets/icons/camera.svg";

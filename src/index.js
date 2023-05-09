@@ -9,7 +9,9 @@ import theme from "./theme"
 import {AuthProvider} from "./guard/AuthProvider";
 import {SdkProvider} from "./sdk/SdkContext";
 import {Provider} from "react-redux";
-import store from "./store";
+import {store, persistor} from "./store";
+import {PersistGate} from "redux-persist/integration/react";
+import {AliveScope} from "react-activation";
 
 
 createRoot(document.getElementById("root")).render(
@@ -19,7 +21,11 @@ createRoot(document.getElementById("root")).render(
                 <AuthProvider>
                     <SdkProvider>
                         <Provider store={store}>
-                            <App/>
+                            <PersistGate loading={null} persistor={persistor}>
+                                <AliveScope>
+                                    <App/>
+                                </AliveScope>
+                            </PersistGate>
                         </Provider>
                     </SdkProvider>
                 </AuthProvider>

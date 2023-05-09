@@ -6,9 +6,15 @@ const Contacts = styled.div`
     & > * {
         margin: 8px 0;
     }
+   
 `;
 
 const StyledContactList = styled.div``;
 
+const StyledText = styled.div`
+    margin-top: 200px;
+    text-align: center;
+`
+
 export default StyledContactList;
-export {Contacts};
+export {Contacts,StyledText};

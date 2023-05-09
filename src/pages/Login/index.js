@@ -35,11 +35,137 @@ function Login({children, ...rest}) {
         }, onSocketReConnectSuccessEvent: () => {
             console.log("重连成功");
         },
-        onTestMessage: (e) => {
-            console.log("onTestMessage ：" + e);
-        },
         onLogin: (uid) => {
             console.log("用户" + uid + "登陆sdk成功");
+        },
+        onP2PMessage: (e) => {
+            // 收到的单聊消息
+        },
+        onGroupMessage: (e) => {
+            // 收到的群聊消息
+        },
+        onMessageAck: (e) => {
+            // 单聊消息发送成功ACK
+        },
+        onMessageReceiveAck: (e) => {
+            // 消息接收ACK
+        },
+        onMessageReadedNotify: (e) => {
+            // 消息已读通知发送给同步端
+        },
+        onMessageReadedReceipt: (e) => {
+            // 消息已读回执
+        },
+        onMessageRecallNotify: (e) => {
+            // 消息撤回通知
+        },
+        onMessageRecallAck: (e) => {
+            // 消息撤回ACK
+        },
+        onAddFriend: (e) => {
+            // 添加好友通知
+        },
+        onUpdateFriend: (e) => {
+            // 更新好友通知
+        },
+        onDeleteFriend: (e) => {
+            // 删除好友通知
+        },
+        onFriendRequest: (e) => {
+            // 好友申请通知
+        },
+        onReadFriendRequest: (e) => {
+            // 好友申请已读通知
+        },
+        onApproveFriendRequest: (e) => {
+            // 审批好友申请通知
+        },
+        onBlackFriend: (e) => {
+            // 拉黑好友通知
+        },
+        onDeleteBlackFriend: (e) => {
+            // 删除拉黑好友通知
+        },
+        onAddFriendGroup: (e) => {
+            // 添加好友分组通知
+        },
+        onDeleteFriendGroup: (e) => {
+            // 删除好友分组通知
+        },
+        onAddFriendGroupMember: (e) => {
+            // 添加好友分组成员通知
+        },
+        onDeleteFriendGroupMember: (e) => {
+            // 删除好友分组成员通知
+        },
+        onDeleteAllFriend: (e) => {
+            // 删除所有好友通知
+        },
+        onJoinGroup: (e) => {
+            // 申请入群通知
+        },
+        onAddGroupMember: (e) => {
+            // 添加群成员通知
+        },
+        onCreateGroup: (e) => {
+            // 创建群组通知
+        },
+        onUpdateGroup: (e) => {
+            // 更新群组通知
+        },
+        onExitGroup: (e) => {
+            // 退出群组通知
+        },
+        onUpdateGroupMember: (e) => {
+            // 修改群成员通知
+        },
+        onDeleteGroupMember: (e) => {
+            // 删除群成员通知
+        },
+        onDestroyGroup: (e) => {
+            // 解散群通知
+        },
+        onTransferGroup: (e) => {
+            // 转让群通知
+        },
+        onMuteGroup: (e) => {
+            // 禁言群通知
+        },
+        onMuteGroupMember: (e) => {
+            // 禁言群成员通知
+        },
+        onApproveGroupRequest: (e) => {
+            // 审批群申请通知
+        },
+        onReadGroupRequest: (e) => {
+            // 已读群申请通知
+        },
+        onGroupMessageReadedNotify: (e) => {
+            // 群聊消息已读通知
+        },
+        onGroupMessageReadedReceipt: (e) => {
+            // 群聊消息已读回执
+        },
+        onGroupMessageAck: (e) => {
+            // 群聊消息ACK
+        },
+        onUserModify: (e) => {
+            // 用户信息变更通知
+        },
+        onUserOnlineStatusChangeNotify: (e) => {
+            // 用户在线状态更改通知
+        },
+        onUserOnlineStatusChangeNotifySync: (e) => {
+            // 用户在线状态更改同步通知
+        },
+        onUserCustomStatusChangeNotify: (e) => {
+            // 用户自身在线状态更改通知
+        },
+        onConversationDelete: (e) => {
+            // 删除会话通知
+        },
+        onConversationUpdate: (e) => {
+            // 更新会话通知
         }
     }
 

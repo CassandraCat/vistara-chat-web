@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledChatApp, {Nav, Sidebar, Drawer, Content} from "./style";
 import NavBar from "components/NavBar";
 import MessageList from "components/MessageList";
 import Conversation from "components/Conversation";
 import Profile from "components/Profile";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import {matchPath, Navigate, Route, Routes, useLocation, useMatch} from "react-router-dom";
 import ContactList from "components/ContactList";
 import FileList from "components/FileList";
 import NoteList from "components/NoteList";
@@ -14,18 +14,19 @@ import Settings from "components/Settings";
 import BlockedList from "components/BlockedList";
 import VideoCall from "components/VideoCall";
 import {useTransition, animated} from "react-spring";
-import {useSdk} from "../../sdk/SdkContext";
 import {useAuth} from "../../guard/AuthProvider";
+import PubSub from "pubsub-js"
+import Add from "../Add";
 
 function ChatApp({children, ...rest}) {
 
     const {user} = useAuth();
-    console.log(user)
-
-
 
     const [showDrawer, setShowDrawer] = useState(false);
     const [videoCalling, setVideoCalling] = useState(false);
+    const [showConversation, setShowConversation] = useState(false);
+    const [friendId, setFriendId] = useState('')
+    const [isSearch, setIsSearch] = useState(false)
 
     const location = useLocation();
 
@@ -34,6 +35,33 @@ function ChatApp({children, ...rest}) {
         enter: {opacity: 1, transform: "translate3d(0, 0, 0)"},
         leave: {opacity: 0, transform: "translate3d(-100px, 0, 1)"},
     });
+
+    const isMessageList = !!matchPath(
+        {
+            path: "/",
+            end: true,
+        },
+        location.pathname
+    )
+
+    useEffect(() => {
+        PubSub.subscribe("showMessage", (_, data) => {
+            setShowConversation(data)
+        })
+        PubSub.subscribe("friend", (_, data) => {
+            setFriendId(data)
+        })
+        PubSub.subscribe("close", (_, data) => {
+            setIsSearch(data)
+        })
+        PubSub.subscribe("open", (_, data) => {
+            setIsSearch(data)
+        })
+        if (!isMessageList) {
+            setShowConversation(false)
+        }
+
+    }, [isMessageList])
 
     if (!user) {
         return <Navigate to={'/login'}></Navigate>
@@ -62,18 +90,23 @@ function ChatApp({children, ...rest}) {
                 {videoCalling && (
                     <VideoCall onHangOffClicked={() => setVideoCalling(false)}/>
                 )}
+
+                {
+                    showConversation && isMessageList && (<Conversation
+                        onAvatarClick={() => setShowDrawer(true)}
+                        onVideoClicked={() => setVideoCalling(true)}
+                    />)
+                }
+
+                {
+                    isSearch && (
+                        <Add></Add>
+                    )
+                }
+
                 <Routes>
                     <Route path="/settings" element={<Settings/>}/>
                     <Route path="/settings/blocked" element={<BlockedList/>}/>
-                    <Route
-                        path="/"
-                        element={
-                            <Conversation
-                                onAvatarClick={() => setShowDrawer(true)}
-                                onVideoClicked={() => setVideoCalling(true)}
-                            />
-                        }
-                    />
                 </Routes>
             </Content>
             <Drawer show={showDrawer}>

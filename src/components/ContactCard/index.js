@@ -1,15 +1,28 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledContactCard, {Intro, Name} from "./style";
-import face from "assets/images/face-male-1.jpg";
+import face from "assets/images/face-male-2.jpg";
 import Avatar from "components/Avatar";
+import {useSdk} from "../../sdk/SdkContext";
 
 function ContactCard({contact, children, ...rest}) {
+
+    const im = useSdk()
+    const [contactInfo,setContactInfo] = useState({})
+
+    useEffect(()=>{
+        im.getUserInfo([contact.toId]).then(result => {
+            setContactInfo({...result.data.userDataItems[0]})
+        }).catch(err => {
+            throw new Error(err)
+        })
+    },[contact.toId])
+
     return (
         <StyledContactCard {...rest}>
-            <Avatar src={contact.avatar} status="online"/>
-            <Name>{contact.name}</Name>
-            <Intro>{contact.intro}</Intro>
+            <Avatar src={contactInfo.photo ? contact.photo : face} status="online"/>
+            <Name>{contact.remark ? contact.remark : contact.toId}</Name>
+            <Intro>{contactInfo.selfSignature}</Intro>
         </StyledContactCard>
     );
 }

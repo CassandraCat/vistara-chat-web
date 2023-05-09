@@ -9,6 +9,7 @@ import Button from "components/Button";
 import Icon from "components/Icon";
 
 import {ReactComponent as Plus} from "assets/icons/plus.svg";
+import PubSub from "pubsub-js";
 
 function FilterList({
                         children,
@@ -17,6 +18,11 @@ function FilterList({
                         actionLabel,
                         ...rest
                     }) {
+
+    const clickHandler = () => {
+        PubSub.publish("open", true)
+    }
+
     return (
         <StyledFilterList {...rest}>
             <Input.Search/>
@@ -33,7 +39,7 @@ function FilterList({
 
                 {actionLabel && (
                     <Filter.Action label={actionLabel}>
-                        <Button>
+                        <Button onClick={clickHandler}>
                             <Icon icon={Plus} width={12} height={12}/>
                         </Button>
                     </Filter.Action>

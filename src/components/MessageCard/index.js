@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import PropTypes from "prop-types";
 import StyledMessageCard, {
     Name,
@@ -13,6 +13,8 @@ import {useTheme} from "styled-components";
 
 import {ReactComponent as Replied} from "assets/icons/replied.svg";
 import Icon from "components/Icon";
+import {useLocation, useNavigate} from "react-router-dom";
+import PubSub from "pubsub-js";
 
 function MessageCard({
                          avatarSrc,
@@ -29,8 +31,15 @@ function MessageCard({
                      }) {
     const theme = useTheme();
 
+    const {sign, changeActive} = {...rest};
+
+    const clickHandler = (e) => {
+        changeActive(sign)
+        PubSub.publish("friend", name)
+    }
+
     return (
-        <StyledMessageCard active={active} {...rest}>
+        <StyledMessageCard active={active} {...rest} onClick={clickHandler}>
             <Avatar status={avatarStatus} src={avatarSrc}/>
             <Name>{name}</Name>
             <Status>{statusText}</Status>

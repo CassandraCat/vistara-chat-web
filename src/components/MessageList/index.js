@@ -1,24 +1,34 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledMessageList, {ChatList} from "./style";
+import PubSub from "pubsub-js"
 
-import {ReactComponent as Plus} from "assets/icons/plus.svg";
-import Filter from "components/Filter";
-import Select from "components/Select";
-import Option from "components/Option";
-import Button from "components/Button";
-import Icon from "components/Icon";
-import Input from "components/Input";
+
 import MessageCard from "components/MessageCard";
 
-import face1 from "assets/images/face-male-1.jpg";
 import FilterList from "components/FilterList";
-import {useTrail, animated} from "react-spring";
+import {animated} from "react-spring";
 import useStaggeredList from "hooks/useStaggeredList";
 import messageData from "data/messages";
+import {useSdk} from "../../sdk/SdkContext";
 
 function MessageList({children, ...rest}) {
     const trailAnimes = useStaggeredList(6);
+
+    const im = useSdk()
+
+    const [activeIndex, setActiveIndex] = useState(0)
+    const [conversationList, setConversationList] = useState([])
+
+    const changeHandler = (index) => {
+        setActiveIndex(index)
+        PubSub.publish("showMessage", true)
+    }
+
+    useEffect(() => {
+
+    }, [])
+
 
     return (
         <StyledMessageList {...rest}>
@@ -31,7 +41,8 @@ function MessageList({children, ...rest}) {
                         <animated.div key={message.id} style={trailAnimes[index]}>
                             <MessageCard
                                 key={message.id}
-                                active={index === 2}
+                                sign={message.id}
+                                active={message.id === activeIndex}
                                 replied={message.replied}
                                 avatarSrc={message.avatarSrc}
                                 name={message.name}
@@ -40,6 +51,7 @@ function MessageList({children, ...rest}) {
                                 time={message.time}
                                 message={message.message}
                                 unreadCount={message.unreadCount}
+                                changeActive={changeHandler}
                             />
                         </animated.div>
                     ))}
@@ -53,4 +65,4 @@ MessageList.propTypes = {
     children: PropTypes.any,
 };
 
-export default MessageList;
+export default React.memo(MessageList);

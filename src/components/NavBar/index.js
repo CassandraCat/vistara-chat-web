@@ -52,7 +52,7 @@ function MenuItem({to = "#", icon, showBadge, ...rest}) {
         <StyledMenuItem active={active} {...rest}>
             <Link to={to}>
                 <Badge show={showBadge}>
-                    <MenuIcon active={active} icon={icon}/>
+                    <MenuIcon active={active ? 1 : 0} icon={icon}/>
                 </Badge>
             </Link>
         </StyledMenuItem>
