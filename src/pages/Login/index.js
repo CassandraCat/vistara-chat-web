@@ -212,7 +212,7 @@ function Login({children, ...rest}) {
     const options = {
         background: {
             color: {
-                value: "#0d47a1",
+                value: "#4F9DDE",
             },
         },
         fpsLimit: 120,

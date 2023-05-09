@@ -17,6 +17,7 @@ import {useTransition, animated} from "react-spring";
 import {useAuth} from "../../guard/AuthProvider";
 import PubSub from "pubsub-js"
 import Add from "../Add";
+import FriendModal from "../FriendModal";
 
 function ChatApp({children, ...rest}) {
 
@@ -27,6 +28,8 @@ function ChatApp({children, ...rest}) {
     const [showConversation, setShowConversation] = useState(false);
     const [friendId, setFriendId] = useState('')
     const [isSearch, setIsSearch] = useState(false)
+    const [isShowFriendModal, setIsShowFriendModal] = useState(false)
+    const [friendModalInfo, setFriendModalInfo] = useState(null)
 
     const location = useLocation();
 
@@ -57,8 +60,15 @@ function ChatApp({children, ...rest}) {
         PubSub.subscribe("open", (_, data) => {
             setIsSearch(data)
         })
+        PubSub.subscribe("friendModalInfo", (_, data) => {
+            if (data != null) {
+                setIsShowFriendModal(true)
+                setFriendModalInfo(data)
+            }
+        })
         if (!isMessageList) {
             setShowConversation(false)
+            setIsShowFriendModal(false)
         }
 
     }, [isMessageList])
@@ -95,12 +105,19 @@ function ChatApp({children, ...rest}) {
                     showConversation && isMessageList && (<Conversation
                         onAvatarClick={() => setShowDrawer(true)}
                         onVideoClicked={() => setVideoCalling(true)}
+                        friendId={friendId}
                     />)
                 }
 
                 {
                     isSearch && (
                         <Add></Add>
+                    )
+                }
+
+                {
+                    isShowFriendModal && (
+                        <FriendModal friendModalInfo={friendModalInfo}/>
                     )
                 }
 

@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
 const StyledLogin = styled.div`
-    
+    background-color: ${({theme}) => theme.primaryColor};
 `;
 
 const StyledContainer = styled.div`
     position: fixed;
     background-color: rgba(0, 0, 0, 0);
-    width: 500px;
+    width: 350px;
     height: 300px;
     top: 50%;
     left: 50%;
