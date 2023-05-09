@@ -11,14 +11,23 @@ import {animated} from "react-spring";
 import useStaggeredList from "hooks/useStaggeredList";
 import messageData from "data/messages";
 import {useSdk} from "../../sdk/SdkContext";
+import _ from "lodash";
+import {useDispatch, useSelector} from "react-redux";
+import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
+import face from "assets/images/face-male-2.jpg"
 
 function MessageList({children, ...rest}) {
     const trailAnimes = useStaggeredList(6);
 
     const im = useSdk()
 
+    const conversationListStore = useSelector(state => state.conversationList)
     const [activeIndex, setActiveIndex] = useState(0)
-    const [conversationList, setConversationList] = useState([])
+    const [conversationList, setConversationList] = useState(conversationListStore)
+
+    const dispatch = useDispatch()
+
+    let conversationSequence = window.localStorage.getItem("conversationSequence")
 
     const changeHandler = (index) => {
         setActiveIndex(index)
@@ -26,12 +35,42 @@ function MessageList({children, ...rest}) {
     }
 
     useEffect(() => {
+        console.log('我是MessageList，我执行了')
         PubSub.subscribe("addConversation", (_, data) => {
             if (data != null) {
-                setConversationList(prevState => [...prevState, data])
+                conversationList.forEach(conversation => {
+                    if (conversation.toId === data.userId) {
+                        data = null
+                    }
+                })
+                data && setConversationList(prevState => [...prevState, {toId: data.userId}])
             }
         })
-    }, [])
+
+        if (conversationSequence === null) {
+            conversationSequence = 0
+            window.localStorage.setItem('conversationSequence', conversationSequence)
+        }
+
+        im.syncConversationList(conversationSequence, 100).then(result => {
+            if (result.data.maxSequence != null) {
+                conversationSequence = result.data.maxSequence
+                window.localStorage.setItem("friendSequence", conversationSequence)
+            }
+            if (result.data.dataList != null) {
+                conversationList.forEach(friend => {
+                    result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
+                })
+                setTimeout(() => {
+                    dispatch(syncConversationList(result.data.dataList))
+                }, 0)
+                setConversationList(prevState => [...prevState, ...result.data.dataList])
+            }
+        }).catch(err => {
+            throw new Error(err)
+        })
+
+    }, [conversationSequence])
 
 
     return (
@@ -41,17 +80,17 @@ function MessageList({children, ...rest}) {
                 actionLabel="创建会话"
             >
                 <ChatList>
-                    {messageData.map((message, index) => (
-                        <animated.div key={message.id} style={trailAnimes[index]}>
+                    {conversationList.map((message, index) => (
+                        <animated.div key={message.toId} style={trailAnimes[index]}>
                             <MessageCard
-                                key={message.id}
-                                sign={message.id}
-                                active={message.id === activeIndex}
+                                key={message.toId}
+                                sign={message.toId}
+                                active={message.toId === activeIndex}
                                 replied={message.replied}
-                                avatarSrc={message.avatarSrc}
-                                name={message.name}
-                                avatarStatus={message.status}
-                                statusText={message.statusText}
+                                avatarSrc={message.avatarSrc ? message.avatarSrc : face}
+                                name={message.toId}
+                                avatarStatus={message.status ? message.status : "online"}
+                                statusText={message.statusText ? message.statusText : '在线'}
                                 time={message.time}
                                 message={message.message}
                                 unreadCount={message.unreadCount}

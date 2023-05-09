@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropTypes from "prop-types";
 import StyledTitleBar, {Actions, Title} from "./style";
 
@@ -23,13 +23,16 @@ function TitleBar({
                       children,
                       ...rest
                   }) {
+
+    const {toinfo} = {...rest}
+
     return (
         <StyledTitleBar style={{...style, ...animeProps}} {...rest}>
-            <Avatar onClick={onAvatarClick} status="offline" src={face}/>
+            <Avatar onClick={onAvatarClick} status="online" src={face}/>
             <Title>
-                <Paragraph size="large">慕容天宇</Paragraph>
+                <Paragraph size="large">{toinfo?.userId}</Paragraph>
                 <Paragraph type="secondary">
-                    <Text>离线</Text>
+                    <Text>在线</Text>
                     <Text>· 最后阅读：3小时前</Text>
                 </Paragraph>
             </Title>

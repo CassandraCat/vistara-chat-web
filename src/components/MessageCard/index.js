@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledMessageCard, {
     Name,
@@ -15,6 +15,9 @@ import {ReactComponent as Replied} from "assets/icons/replied.svg";
 import Icon from "components/Icon";
 import {useLocation, useNavigate} from "react-router-dom";
 import PubSub from "pubsub-js";
+import {useSdk} from "../../sdk/SdkContext";
+import {useDispatch} from "react-redux";
+import {modifyFriendInfo} from "../../store/festures/friend/friendInfoSlice";
 
 function MessageCard({
                          avatarSrc,
@@ -31,12 +34,26 @@ function MessageCard({
                      }) {
     const theme = useTheme();
 
-    const {sign, changeActive} = {...rest};
+    const dispatch = useDispatch()
 
-    const clickHandler = (e) => {
-        changeActive(sign)
-        PubSub.publish("friend", name)
+    const im = useSdk()
+
+    const {sign: userId, changeActive} = {...rest};
+
+    const [userInfo, setUserInfo] = useState(null)
+
+    const clickHandler = () => {
+        changeActive(userId)
+        dispatch(modifyFriendInfo(userInfo))
     }
+
+    useEffect(() => {
+        im.getUserInfo([userId]).then(result => {
+            setUserInfo({...result.data.userDataItems[0]})
+        }).catch(error => {
+            throw new Error(error)
+        })
+    }, [userId])
 
     return (
         <StyledMessageCard active={active} {...rest} onClick={clickHandler}>

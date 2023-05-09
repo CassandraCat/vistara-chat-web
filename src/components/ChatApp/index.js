@@ -57,36 +57,39 @@ function ChatApp({children, ...rest}) {
 
     useEffect(() => {
 
-        console.log('我重新执行了！！！！！！')
-
-        PubSub.subscribe("showMessage", (_, data) => {
+        const showMessageToken = PubSub.subscribe("showMessage", (_, data) => {
             setShowConversation(data)
         })
-        PubSub.subscribe("friend", (_, data) => {
-            setFriendId(data)
-        })
-        PubSub.subscribe("close", (_, data) => {
+        const closeToken = PubSub.subscribe("close", (_, data) => {
             setIsSearch(data)
         })
-        PubSub.subscribe("open", (_, data) => {
+        const openToken = PubSub.subscribe("open", (_, data) => {
             setIsSearch(data)
         })
-        PubSub.subscribe("friendModalInfo", (_, data) => {
+        const friendModalInfoToken = PubSub.subscribe("friendModalInfo", (_, data) => {
             if (data != null) {
                 setIsShowFriendModal(true)
                 setFriendModalInfo(data)
             }
         })
-        PubSub.subscribe("closeFriendModal", (_, data) => {
+        const closeFriendModalToken = PubSub.subscribe("closeFriendModal", (_, data) => {
             setIsShowFriendModal(data)
         })
         if (!isMessageList) {
             setShowConversation(false)
         }
 
-        if (isContactList) {
+        if (!isContactList) {
             setIsShowFriendModal(false)
             setIsSearch(false)
+        }
+
+        return () => {
+            PubSub.unsubscribe(showMessageToken)
+            PubSub.unsubscribe(closeToken)
+            PubSub.unsubscribe(openToken)
+            PubSub.unsubscribe(friendModalInfoToken)
+            PubSub.unsubscribe(closeFriendModalToken)
         }
 
     }, [isMessageList, isContactList])
@@ -123,7 +126,6 @@ function ChatApp({children, ...rest}) {
                     showConversation && isMessageList && (<Conversation
                         onAvatarClick={() => setShowDrawer(true)}
                         onVideoClicked={() => setVideoCalling(true)}
-                        friendId={friendId}
                     />)
                 }
 

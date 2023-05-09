@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledConversation, {Conversations, MyChatBubble} from "./style";
 import TitleBar from "components/TitleBar";
@@ -7,8 +7,11 @@ import VoiceMessage from "components/VoiceMessage";
 import Emoji from "components/Emoji";
 import Footer from "components/Footer";
 import {useSpring} from "react-spring";
+import PubSub from "pubsub-js";
+import {useSelector} from "react-redux";
 
 function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
+
     const tBarAnimeProps = useSpring({
         opacity: 1,
         transform: "translate3d(0px, 0px, 0px)",
@@ -30,12 +33,21 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
         delay: 750,
     });
 
+    const [toInfo, setToInfo] = useState({})
+
+    const friendInfo = useSelector(state => state.friendInfo)
+
+    useEffect(() => {
+
+    }, [])
+
     return (
         <StyledConversation {...rest}>
             <TitleBar
                 onVideoClicked={onVideoClicked}
                 onAvatarClick={onAvatarClick}
                 animeProps={tBarAnimeProps}
+                toinfo={friendInfo}
             />
             <Conversations style={convsAnimeProps}>
                 <ChatBubble time="昨天 下午14：26">Hi 小宇，忙什么呢？</ChatBubble>

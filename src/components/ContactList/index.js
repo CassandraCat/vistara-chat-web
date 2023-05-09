@@ -10,7 +10,7 @@ import _ from "lodash"
 import {useSdk} from "../../sdk/SdkContext";
 import PubSub from "pubsub-js";
 import {useDispatch, useSelector} from "react-redux";
-import {syncFriendList} from "../../store/festures/Friend/friendListSlice";
+import {syncFriendList} from "../../store/festures/friend/friendListSlice";
 
 function ContactList({children, ...rest}) {
 
