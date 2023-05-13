@@ -40,7 +40,7 @@ function VideoCall({children, onHangOffClicked, ...rest}) {
                         grid-area: info;
                     `}
                 >
-                    正在跟 李铭浩 进行视频通话
+                    正在跟 PeachZhang 进行视频通话
                 </Paragraph>
                 <Paragraph
                     type="secondary"

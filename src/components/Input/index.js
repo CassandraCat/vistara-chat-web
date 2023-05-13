@@ -2,16 +2,25 @@ import React from "react";
 import PropTypes from "prop-types";
 import StyledInput, {InputContainer, Prefix, Suffix} from "./style";
 import Icon from "components/Icon";
-
 import {ReactComponent as SearchIcon} from "assets/icons/search.svg";
 import {useTheme} from "styled-components";
 import InputText from "./InputText";
+import _ from "lodash"
+import {useDispatch} from "react-redux";
+import {modifyMessageContent} from "../../store/festures/message/messageContentSlice";
 
 function Input({placeholder = "请输入内容...", prefix, suffix, ...rest}) {
+
+    const dispatch = useDispatch()
+
+    const msgHandler = _.debounce((e) => {
+        dispatch(modifyMessageContent(e.target.value))
+    }, 800)
+
     return (
         <InputContainer {...rest}>
             {prefix && <Prefix>{prefix}</Prefix>}
-            <StyledInput placeholder={placeholder}/>
+            <StyledInput onChange={msgHandler} placeholder={placeholder}/>
             {suffix && <Suffix>{suffix}</Suffix>}
         </InputContainer>
     );

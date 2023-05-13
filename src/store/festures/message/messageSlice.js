@@ -1,13 +1,19 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-const initialState = []
+const initialState = {}
 
 export const messageSlice = createSlice({
     name: 'message',
     initialState,
     reducers: {
         modifyMessageList: (state, action) => {
-            state.push(action.payload)
+            if (state[action.payload.friendId] === undefined) {
+                state[action.payload.friendId] = []
+            }
+            state[action.payload.friendId].push(action.payload.messageInfo)
+        },
+        addMessageId: (state, action) => {
+
         }
     }
 })

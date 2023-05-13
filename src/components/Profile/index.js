@@ -10,7 +10,7 @@ import StyledProfile, {
     CloseIcon,
 } from "./style";
 import "styled-components/macro";
-import face from "assets/images/face-male-3.jpg";
+import face from "assets/images/face-male-1.jpg";
 import Avatar from "components/Avatar";
 import Paragraph from "components/Paragraph";
 import Emoji from "components/Emoji";
@@ -80,7 +80,7 @@ function Profile({
                     margin-bottom: 12px;
                 `}
             >
-                慕容天宇
+                CrazyCatZhang
             </Paragraph>
             <Paragraph
                 size="medium"
@@ -89,14 +89,14 @@ function Profile({
                     margin-bottom: 18px;
                 `}
             >
-                北京市 朝阳区
+                重庆市 巴南区
             </Paragraph>
             <Paragraph
                 css={`
                     margin-bottom: 26px;
                 `}
             >
-                帮助客户构建网站，并协助在社交网站上进行推广{" "}
+                What's past is prologue{" "}
                 <Emoji label="fire">🔥</Emoji>
             </Paragraph>
             <SocialLinks>

@@ -13,10 +13,36 @@ import Button from "components/Button";
 import Emoji from "components/Emoji";
 import Popover from "components/Popover";
 import {useTheme} from "styled-components";
+import {useDispatch, useSelector} from "react-redux";
+import {useSdk} from "../../sdk/SdkContext";
+import {modifyMessageList} from "../../store/festures/message/messageSlice";
 
 function Footer({animeProps, style, children, ...rest}) {
+
+    const im = useSdk()
+
     const [emojiIconActive, setEmojiIconActive] = useState(false);
     const theme = useTheme();
+    const messageContent = useSelector(state => state.messageContent)
+    const friendInfo = useSelector(state => state.friendInfo)
+
+    const dispatch = useDispatch()
+
+    const sendMessage = () => {
+        const pack = im.sendP2PTextMessage(friendInfo.userId, messageContent)
+        const messageBody = JSON.parse(pack.messageBody)
+        dispatch(modifyMessageList({
+            friendId: pack.toId,
+            messageInfo: {
+                isAccept: false,
+                messageContent: messageBody.content,
+                messageId: pack.messageId,
+                messageKey: pack.messageKey || '',
+                messageTime: pack.messageTime
+            }
+        }))
+    }
+
     return (
         <StyledFooter style={{...style, ...animeProps}} {...rest}>
             <Input
@@ -36,7 +62,7 @@ function Footer({animeProps, style, children, ...rest}) {
                             />
                         </Popover>
                         <Icon icon={MicrophoneIcon}/>
-                        <Button size="52px">
+                        <Button size="52px" onClick={sendMessage}>
                             <Icon
                                 icon={PlaneIcon}
                                 color="white"

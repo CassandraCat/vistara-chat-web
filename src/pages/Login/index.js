@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {modify, modifyUserSession} from "../../store/festures/user/userSessionSlice";
 import {useSdk} from "../../sdk/SdkContext";
 import {modifyUserInfo} from "../../store/festures/user/userInfoSlice";
+import PubSub from "pubsub-js";
 
 function Login({children, ...rest}) {
 
@@ -40,15 +41,21 @@ function Login({children, ...rest}) {
         },
         onP2PMessage: (e) => {
             // 收到的单聊消息
+            const message = JSON.parse(e)
+            PubSub.publish("P2PMessage", message.data)
         },
         onGroupMessage: (e) => {
             // 收到的群聊消息
         },
         onMessageAck: (e) => {
             // 单聊消息发送成功ACK
+            const messageAck = JSON.parse(e)
+            PubSub.publish("messageId", messageAck.data.data.messageId)
         },
         onMessageReceiveAck: (e) => {
             // 消息接收ACK
+            const messageReceiveAck = JSON.parse(e)
+            PubSub.publish("messageKey", messageReceiveAck.data.messageKey)
         },
         onMessageReadedNotify: (e) => {
             // 消息已读通知发送给同步端
