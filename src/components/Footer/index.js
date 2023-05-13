@@ -16,6 +16,7 @@ import {useTheme} from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import {useSdk} from "../../sdk/SdkContext";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
+import {modifyMessageContent} from "../../store/festures/message/messageContentSlice";
 
 function Footer({animeProps, style, children, ...rest}) {
 
@@ -41,6 +42,7 @@ function Footer({animeProps, style, children, ...rest}) {
                 messageTime: pack.messageTime
             }
         }))
+        dispatch(modifyMessageContent(''))
     }
 
     return (
