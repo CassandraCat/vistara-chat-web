@@ -86,8 +86,17 @@ function Footer({animeProps, style, children, ...rest}) {
 
 /* eslint-disable jsx-a11y/accessible-emoji */
 function PopoverContent(props) {
+
+    const messageContent = useSelector(state => state.messageContent)
+    const dispatch = useDispatch()
+
+    const selectEmoji = (e) => {
+        // console.log(e.target.innerHTML)
+        dispatch(modifyMessageContent(messageContent + e.target.innerHTML))
+    }
+
     return (
-        <StyledPopoverContent>
+        <StyledPopoverContent onClick={selectEmoji}>
             <Emoji label="smile">😊</Emoji>
             <Emoji label="grinning">😆</Emoji>
             <Emoji label="thumbup">👍</Emoji>
