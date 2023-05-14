@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useSdk} from "../../sdk/SdkContext";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
 import {modifyMessageContent} from "../../store/festures/message/messageContentSlice";
+import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
 
 function Footer({animeProps, style, children, ...rest}) {
 
@@ -32,17 +33,22 @@ function Footer({animeProps, style, children, ...rest}) {
     const sendMessage = () => {
         const pack = im.sendP2PTextMessage(friendInfo.userId, messageContent)
         const messageBody = JSON.parse(pack.messageBody)
+        const messageInfo = {
+            isAccept: false,
+            messageContent: messageBody.content,
+            messageId: pack.messageId,
+            messageKey: pack.messageKey || '',
+            messageTime: pack.messageTime
+        }
         dispatch(modifyMessageList({
             friendId: pack.toId,
-            messageInfo: {
-                isAccept: false,
-                messageContent: messageBody.content,
-                messageId: pack.messageId,
-                messageKey: pack.messageKey || '',
-                messageTime: pack.messageTime
-            }
+            messageInfo
         }))
         dispatch(modifyMessageContent(''))
+        dispatch(syncConversationList([{
+            toId: pack.toId,
+            messsage: messageInfo
+        }]))
     }
 
     return (

@@ -8,6 +8,8 @@ import {Button, Tooltip} from "antd";
 import {MessageTwoTone, PhoneTwoTone, VideoCameraTwoTone} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import PubSub from "pubsub-js";
+import {useDispatch, useSelector} from "react-redux";
+import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
 
 
 function FriendModal({children, ...rest}) {
@@ -16,8 +18,16 @@ function FriendModal({children, ...rest}) {
 
     const navigate = useNavigate()
 
+    const dispatch = useDispatch()
+    const messageList = useSelector(state => state.messageList)
+    const messageInfo = messageList[friendModalInfo.userId]
+
     const navigateToMessage = () => {
-        PubSub.publish('addConversation', friendModalInfo)
+        dispatch(syncConversationList([{
+            toId: friendModalInfo.userId,
+            message: messageInfo ? messageInfo[messageInfo.length - 1] : {}
+        }]))
+        // PubSub.publish('addConversation', friendModalInfo)
         navigate('/', {
             replace: true
         })

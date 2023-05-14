@@ -8,10 +8,20 @@ export const conversationListSlice = createSlice({
     initialState,
     reducers: {
         syncConversationList: (state, action) => {
-            state.forEach(friend => {
-                action.payload = action.payload.filter(item => _.isEqual(friend, item));
+            action.payload = action.payload.filter(item => item.message !== undefined)
+            action.payload.forEach(item => {
+                if (state.length === 0) {
+                    state.push(item)
+                } else {
+                    state.forEach(friend => {
+                        if (friend.toId === item.toId) {
+                            friend.message = item.message
+                        } else {
+                            state.push(item)
+                        }
+                    })
+                }
             })
-            return [...state, ...action.payload]
         }
     }
 })

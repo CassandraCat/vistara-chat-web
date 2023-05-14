@@ -15,15 +15,22 @@ import _ from "lodash";
 import {useDispatch, useSelector} from "react-redux";
 import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
 import face from "assets/images/face-male-2.jpg"
+import {formatTime} from "../../utils/formatTime";
+import {store} from "../../store";
 
 function MessageList({children, ...rest}) {
+
+    console.log('我重新渲染了')
+
     const trailAnimes = useStaggeredList(6);
 
     const im = useSdk()
 
     const conversationListStore = useSelector(state => state.conversationList)
+
     const [activeIndex, setActiveIndex] = useState(0)
     const [conversationList, setConversationList] = useState(conversationListStore)
+    const messageList = useSelector(state => state.messageList)
 
     const dispatch = useDispatch()
 
@@ -34,43 +41,44 @@ function MessageList({children, ...rest}) {
         PubSub.publish("showMessage", true)
     }
 
+
     useEffect(() => {
-        console.log('我是MessageList，我执行了')
-        PubSub.subscribe("addConversation", (_, data) => {
-            if (data != null) {
-                conversationList.forEach(conversation => {
-                    if (conversation.toId === data.userId) {
-                        data = null
-                    }
-                })
-                data && setConversationList(prevState => [...prevState, {toId: data.userId}])
-            }
-        })
+
+        // store.subscribe(()=>{
+        //     const messageList = store.getState().messageList
+        //
+        // })
 
         if (conversationSequence === null) {
             conversationSequence = 0
             window.localStorage.setItem('conversationSequence', conversationSequence)
         }
 
-        im.syncConversationList(conversationSequence, 100).then(result => {
-            if (result.data.maxSequence != null) {
-                conversationSequence = result.data.maxSequence
-                window.localStorage.setItem("friendSequence", conversationSequence)
-            }
-            if (result.data.dataList != null) {
-                conversationList.forEach(friend => {
-                    result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
-                })
-                setTimeout(() => {
-                    dispatch(syncConversationList(result.data.dataList))
-                }, 0)
-                setConversationList(prevState => [...prevState, ...result.data.dataList])
-            }
-        }).catch(err => {
-            throw new Error(err)
-        })
+        // im.syncConversationList(conversationSequence, 100).then(result => {
+        //     if (result.data.maxSequence != null) {
+        //         conversationSequence = result.data.maxSequence
+        //         window.localStorage.setItem("friendSequence", conversationSequence)
+        //     }
+        //     if (result.data.dataList != null) {
+        //         conversationList.forEach(friend => {
+        //             result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
+        //         })
+        //
+        //         setTimeout(() => {
+        //             dispatch(syncConversationList(result.data.dataList))
+        //         }, 0)
+        //         setConversationList(prevState => [...prevState, ...result.data.dataList])
+        //     }
+        // }).catch(err => {
+        //     throw new Error(err)
+        // })
+        //
+        // return () => {
+        //     console.log('我取消了订阅')
+        //     PubSub.unsubscribe(addToken)
+        // }
 
-    }, [conversationSequence])
+    }, [conversationSequence, messageList])
 
 
     return (
@@ -80,20 +88,20 @@ function MessageList({children, ...rest}) {
                 actionLabel="创建会话"
             >
                 <ChatList>
-                    {conversationList.map((message, index) => (
-                        <animated.div key={message.toId} style={trailAnimes[index]}>
+                    {conversationList.map((item, index) => (
+                        <animated.div key={item.toId} style={trailAnimes[index]}>
                             <MessageCard
-                                key={message.toId}
-                                sign={message.toId}
-                                active={message.toId === activeIndex}
-                                replied={message.replied}
-                                avatarSrc={message.avatarSrc ? message.avatarSrc : face}
-                                name={message.toId}
-                                avatarStatus={message.status ? message.status : "online"}
-                                statusText={message.statusText ? message.statusText : '在线'}
-                                time={message.time}
-                                message={message.message}
-                                unreadCount={message.unreadCount}
+                                key={item.toId}
+                                sign={item.toId}
+                                active={item.toId === activeIndex}
+                                replied={!item.message.isAccept}
+                                avatarSrc={item.avatarSrc ? item.avatarSrc : face}
+                                name={item.toId}
+                                avatarStatus={item.status ? item.status : "online"}
+                                statusText={item.statusText ? item.statusText : '在线'}
+                                time={formatTime(item.message.messageTime)}
+                                message={item.message.messageContent}
+                                unreadCount={item.unreadCount}
                                 changeActive={changeHandler}
                             />
                         </animated.div>
