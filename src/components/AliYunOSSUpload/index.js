@@ -88,6 +88,7 @@ function AliYunOSSUpload({value, onChange, children}) {
         onRemove,
         data: getExtraData,
         beforeUpload,
+        showUploadList: false
     }
 
     return (
