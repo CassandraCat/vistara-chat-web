@@ -1,23 +1,19 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import StyledInput, {InputContainer, Prefix, Suffix} from "./style";
 import Icon from "components/Icon";
 import {ReactComponent as SearchIcon} from "assets/icons/search.svg";
 import {useTheme} from "styled-components";
 import InputText from "./InputText";
-import _ from "lodash"
 import {useDispatch, useSelector} from "react-redux";
 import {modifyMessageContent} from "../../store/festures/message/messageContentSlice";
+import AliYunOSSUpload from "../AliYunOSSUpload";
+
 
 function Input({placeholder = "请输入内容...", prefix, suffix, ...rest}) {
 
     const dispatch = useDispatch()
     const messageContent = useSelector(state => state.messageContent)
-
-    // const msgHandler = _.debounce((e) => {
-    //     dispatch(modifyMessageContent(e.target.value))
-    //     setInputValue(e.target.value)
-    // }, 800)
 
     const msgHandler = (e) => {
         dispatch(modifyMessageContent(e.target.value))
@@ -25,7 +21,13 @@ function Input({placeholder = "请输入内容...", prefix, suffix, ...rest}) {
 
     return (
         <InputContainer {...rest}>
-            {prefix && <Prefix>{prefix}</Prefix>}
+            {prefix && (
+                <Prefix>
+                    <AliYunOSSUpload>
+                        {prefix}
+                    </AliYunOSSUpload>
+                </Prefix>
+            )}
             <StyledInput onChange={msgHandler}
                          value={messageContent}
                          placeholder={placeholder}/>

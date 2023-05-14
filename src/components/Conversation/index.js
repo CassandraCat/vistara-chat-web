@@ -15,8 +15,9 @@ import {formatTime} from "../../utils/formatTime";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
 import note3 from "assets/images/note-3.jpg"
 import note4 from "assets/images/note-4.jpg"
-import Image from "components/Image"
 import ImageChatBubble from "../ImageChatBubble";
+import { Image } from 'antd';
+
 
 function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
 
@@ -88,10 +89,10 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
             />
             <Conversations style={convsAnimeProps}>
                 <ImageChatBubble time={"昨天 下午14：26"}>
-                    <Image src={note3}></Image>
+                    <Image src={note3} width={200} height={250}></Image>
                 </ImageChatBubble>
                 <MyImageChatBubble time={"昨天 下午16：30"}>
-                    <Image src={note4}></Image>
+                    <Image src={note4} width={200} height={250}></Image>
                 </MyImageChatBubble>
                 <ChatBubble time="昨天 下午14：26">Hi 小宇，忙什么呢？</ChatBubble>
                 <ChatBubble time="昨天 下午18：30">
