@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
-import StyledConversation, {Conversations, MyChatBubble} from "./style";
+import StyledConversation, {Conversations, MyChatBubble, MyImageChatBubble} from "./style";
 import TitleBar from "components/TitleBar";
 import ChatBubble from "components/ChatBubble";
 import VoiceMessage from "components/VoiceMessage";
@@ -13,6 +13,10 @@ import {store} from "../../store";
 import moment from "moment";
 import {formatTime} from "../../utils/formatTime";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
+import note3 from "assets/images/note-3.jpg"
+import note4 from "assets/images/note-4.jpg"
+import Image from "components/Image"
+import ImageChatBubble from "../ImageChatBubble";
 
 function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
 
@@ -83,11 +87,13 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                 toinfo={friendInfo}
             />
             <Conversations style={convsAnimeProps}>
-
+                <ImageChatBubble time={"昨天 下午14：26"}>
+                    <Image src={note3}></Image>
+                </ImageChatBubble>
+                <MyImageChatBubble time={"昨天 下午16：30"}>
+                    <Image src={note4}></Image>
+                </MyImageChatBubble>
                 <ChatBubble time="昨天 下午14：26">Hi 小宇，忙什么呢？</ChatBubble>
-                <MyChatBubble time="昨天 下午16：30">
-                    Hello 啊！最近就是一直在加班改 bug，然后 怼产品，怼 UI，各种怼！
-                </MyChatBubble>
                 <ChatBubble time="昨天 下午18：30">
                     <VoiceMessage time="01:24"/>
                 </ChatBubble>
@@ -98,9 +104,11 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                 {
                     messageList && messageList.map(message => {
                         if (message.isAccept) {
-                            return <ChatBubble key={message.messageId} time={formatTime(message.messageTime)}>{message.messageContent}</ChatBubble>
+                            return <ChatBubble key={message.messageId}
+                                               time={formatTime(message.messageTime)}>{message.messageContent}</ChatBubble>
                         } else {
-                            return <MyChatBubble key={message.messageId} time={formatTime(message.messageTime)}>{message.messageContent}</MyChatBubble>
+                            return <MyChatBubble key={message.messageId}
+                                                 time={formatTime(message.messageTime)}>{message.messageContent}</MyChatBubble>
                         }
                     })
                 }

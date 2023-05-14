@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import ChatBubble from "components/ChatBubble";
 import {animated} from "react-spring";
+import ImageChatBubble from "../ImageChatBubble";
 
 const Conversations = styled(animated.div)`
     padding: 10px 15px;
@@ -20,6 +21,10 @@ const MyChatBubble = styled(ChatBubble).attrs({type: "mine"})`
     align-self: flex-end;
 `;
 
+const MyImageChatBubble = styled(ImageChatBubble).attrs({type: "mine"})`
+    align-self: flex-end;
+`
+
 const StyledConversation = styled.div`
     display: flex;
     flex-direction: column;
@@ -32,4 +37,4 @@ const StyledConversation = styled.div`
 `;
 
 export default StyledConversation;
-export {Conversations, MyChatBubble};
+export {Conversations, MyChatBubble, MyImageChatBubble};
