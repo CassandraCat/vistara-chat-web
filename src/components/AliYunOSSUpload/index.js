@@ -13,8 +13,8 @@ function AliYunOSSUpload({value, onChange, children}) {
 
     const todayKey = moment().format('YYYY-MM-DD')
     const host = "https://vistara.oss-accelerate.aliyuncs.com"
-    const accessId = "LTAI5tSo4uJ5DBfTBDpmStgg"
-    const accessSecret = "HhH9aEOUtsuViokHoxsb771GY1DIid"
+    const accessId = ""
+    const accessSecret = ""
     const policyText = {
         "expiration": "2028-01-01T12:00:00.000Z", // 设置该Policy的失效时间，
         "conditions": [
@@ -76,7 +76,7 @@ function AliYunOSSUpload({value, onChange, children}) {
         const suffix = file.name.slice(file.name.lastIndexOf('.'));
         const filename = Date.now() + suffix
         // @ts-ignore
-        file.url = OSSData.dir + filename
+        file.url = OSSData.host + OSSData.dir + filename
         return file
     }
 
