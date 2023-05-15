@@ -4,8 +4,15 @@ import moment from "moment/moment";
 import Base64 from "base-64";
 import CryptoJS from "crypto-js";
 import {message, Upload} from "antd";
+import {useSdk} from "../../sdk/SdkContext";
+import {useDispatch, useSelector} from "react-redux";
+import {modifyMessageList} from "../../store/festures/message/messageSlice";
 
 function AliYunOSSUpload({value, onChange, children}) {
+
+    const im = useSdk()
+    const friendInfo = useSelector(state => state.friendInfo)
+    const dispatch = useDispatch()
 
     const [fileList, setFileList] = useState([])
 
@@ -13,8 +20,8 @@ function AliYunOSSUpload({value, onChange, children}) {
 
     const todayKey = moment().format('YYYY-MM-DD')
     const host = "https://vistara.oss-accelerate.aliyuncs.com"
-    const accessId = ""
-    const accessSecret = ""
+    const accessId = "LTAI5tSo4uJ5DBfTBDpmStgg"
+    const accessSecret = "HhH9aEOUtsuViokHoxsb771GY1DIid"
     const policyText = {
         "expiration": "2028-01-01T12:00:00.000Z", // 设置该Policy的失效时间，
         "conditions": [
@@ -50,6 +57,52 @@ function AliYunOSSUpload({value, onChange, children}) {
 
     const handleChange = ({fileList}) => {
         console.log('AliYun OSS:', fileList)
+        fileList.forEach(file => {
+            if (file.status === 'uploading') {
+                console.log(`${file.name} is uploading`)
+            } else if (file.status === 'done') {
+                const fileInfo = {
+                    name: file.name,
+                    uid: file.uid,
+                    url: OSSData.host + '/' + file.url,
+                    type: file.type
+                }
+                setFileList(prevState => [...prevState, {...fileInfo}])
+                if (file.type.includes('image')) {
+                    const pack = im.sendP2PImageMessage(friendInfo.userId, fileInfo.url)
+                    const messageBody = JSON.parse(pack.messageBody)
+                    const messageInfo = {
+                        isAccept: false,
+                        type: 2,
+                        messageContent: messageBody.content,
+                        messageId: pack.messageId,
+                        messageKey: pack.messageKey || '',
+                        messageTime: pack.messageTime
+                    }
+                    dispatch(modifyMessageList({
+                        friendId: pack.toId,
+                        messageInfo
+                    }))
+                } else if (file.type.includes('video')) {
+                    const pack = im.sendP2PVideoMessage(friendInfo.userId, fileInfo.url)
+                    const messageBody = JSON.parse(pack.messageBody)
+                    const messageInfo = {
+                        isAccept: false,
+                        type: 4,
+                        messageContent: messageBody.content,
+                        messageId: pack.messageId,
+                        messageKey: pack.messageKey || '',
+                        messageTime: pack.messageTime
+                    }
+                    dispatch(modifyMessageList({
+                        friendId: pack.toId,
+                        messageInfo
+                    }))
+                }
+            } else {
+                message.error(`${file.name} is upload failed`)
+            }
+        })
         onChange?.([...fileList])
     }
 
@@ -76,7 +129,7 @@ function AliYunOSSUpload({value, onChange, children}) {
         const suffix = file.name.slice(file.name.lastIndexOf('.'));
         const filename = Date.now() + suffix
         // @ts-ignore
-        file.url = OSSData.host + OSSData.dir + filename
+        file.url = OSSData.dir + filename
         return file
     }
 
@@ -92,9 +145,11 @@ function AliYunOSSUpload({value, onChange, children}) {
     }
 
     return (
-        <Upload {...uploadProps}>
-            {children}
-        </Upload>
+        <div key={Math.random()}>
+            <Upload {...uploadProps}>
+                {children}
+            </Upload>
+        </div>
     );
 }
 

@@ -8253,7 +8253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2":
+"deepmerge@npm:^4.0.0, deepmerge@npm:^4.2.2":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: 2024c6a980a1b7128084170c4cf56b0fd58a63f2da1660dcfe977415f27b17dbe5888668b59d0b063753f3220719d5e400b7f113609489c90160bb9a5518d052
@@ -13032,6 +13032,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"load-script@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "load-script@npm:1.0.0"
+  checksum: 8458e3f07b4a86f8d9d66e47a987811491a5d013af23ba7b371c6d3c9dc899885b072ccf65abf7874c10cb197d4975eacd8a7a125bfb38dbbcb267539f5dc1e9
+  languageName: node
+  linkType: hard
+
 "loader-runner@npm:^2.4.0":
   version: 2.4.0
   resolution: "loader-runner@npm:2.4.0"
@@ -13431,6 +13438,13 @@ __metadata:
   dependencies:
     fs-monkey: ^1.0.3
   checksum: fcd037566a4bbb00d61dc991858395ccc06267ab5fe9471aeff28433f2a210bf5dd999e64e8b5473f8244f00dfb7ff3221b5c2fe41ff98af1439e5e2168fc410
+  languageName: node
+  linkType: hard
+
+"memoize-one@npm:^5.1.1":
+  version: 5.2.1
+  resolution: "memoize-one@npm:5.2.1"
+  checksum: a3cba7b824ebcf24cdfcd234aa7f86f3ad6394b8d9be4c96ff756dafb8b51c7f71320785fbc2304f1af48a0467cbbd2a409efc9333025700ed523f254cb52e3d
   languageName: node
   linkType: hard
 
@@ -16973,6 +16987,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:^3.0.1":
+  version: 3.2.1
+  resolution: "react-fast-compare@npm:3.2.1"
+  checksum: 209b4dc3a9cc79c074a26ec020459efd8be279accaca612db2edb8ada2a28849ea51cf3d246fc0fafb344949b93a63a43798b6c1787559b0a128571883fe6859
+  languageName: node
+  linkType: hard
+
 "react-inspector@npm:^5.1.0":
   version: 5.1.1
   resolution: "react-inspector@npm:5.1.1"
@@ -17016,6 +17037,21 @@ __metadata:
   peerDependencies:
     react: ">=16"
   checksum: 6165d441e17ff1f4b0f32ceabdf9117eef6fc3bb798298e23888feaa1792cc4aac3ecdad544d13d1717ed98901ee8d63c98f7f318f260daeefbd2c73ff5ee2ed
+  languageName: node
+  linkType: hard
+
+"react-player@npm:^2.12.0":
+  version: 2.12.0
+  resolution: "react-player@npm:2.12.0"
+  dependencies:
+    deepmerge: ^4.0.0
+    load-script: ^1.0.0
+    memoize-one: ^5.1.1
+    prop-types: ^15.7.2
+    react-fast-compare: ^3.0.1
+  peerDependencies:
+    react: ">=16.6.0"
+  checksum: 77d3e55ed67cd9c1e2300a990d8015d270072daad41f8a0750c32748f3fbfbc5bd2a2f06e78ac6828c2260b84537b9571d0abac31d3e888b74a3dccb59a56365
   languageName: node
   linkType: hard
 
@@ -20704,6 +20740,7 @@ __metadata:
     react: ^18.2.0
     react-activation: ^0.12.4
     react-dom: ^18.2.0
+    react-player: ^2.12.0
     react-redux: ^8.0.5
     react-router-dom: ^6.3.0
     react-scripts: 5.0.1

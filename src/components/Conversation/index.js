@@ -9,14 +9,13 @@ import Footer from "components/Footer";
 import {useSpring} from "react-spring";
 import PubSub from "pubsub-js";
 import {useDispatch, useSelector} from "react-redux";
-import {store} from "../../store";
-import moment from "moment";
 import {formatTime} from "../../utils/formatTime";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
-import note3 from "assets/images/note-3.jpg"
 import note4 from "assets/images/note-4.jpg"
 import ImageChatBubble from "../ImageChatBubble";
-import { Image } from 'antd';
+import {Image} from 'antd';
+import ReactPlayer from 'react-player/lazy'
+import {PlayCircleOutlined} from "@ant-design/icons";
 
 
 function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
@@ -63,6 +62,7 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                 friendId: data.fromId,
                 messageInfo: {
                     isAccept: true,
+                    type: messageBody.type,
                     messageContent: messageBody.content,
                     messageId: data.messageId,
                     messageKey: data.messageKey,
@@ -88,12 +88,6 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                 toinfo={friendInfo}
             />
             <Conversations style={convsAnimeProps}>
-                <ImageChatBubble time={"昨天 下午14：26"}>
-                    <Image src={note3} width={200} height={250}></Image>
-                </ImageChatBubble>
-                <MyImageChatBubble time={"昨天 下午16：30"}>
-                    <Image src={note4} width={200} height={250}></Image>
-                </MyImageChatBubble>
                 <ChatBubble time="昨天 下午14：26">Hi 小宇，忙什么呢？</ChatBubble>
                 <ChatBubble time="昨天 下午18：30">
                     <VoiceMessage time="01:24"/>
@@ -105,11 +99,47 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                 {
                     messageList && messageList.map(message => {
                         if (message.isAccept) {
-                            return <ChatBubble key={message.messageId}
-                                               time={formatTime(message.messageTime)}>{message.messageContent}</ChatBubble>
+                            if (message.type === 1) {
+                                return <ChatBubble key={message.messageId}
+                                                   time={formatTime(message.messageTime)}>{message.messageContent}</ChatBubble>
+                            } else if (message.type === 2) {
+                                return <ImageChatBubble key={message.messageId}
+                                                        time={formatTime(message.messageTime)}>
+                                    <Image src={message.messageContent} width={200}
+                                           height={250}></Image>
+                                </ImageChatBubble>
+                            } else if (message.type === 4) {
+                                return <ImageChatBubble key={message.messageId}
+                                                        time={formatTime(message.messageTime)}>
+                                    <ReactPlayer
+                                        url={message.messageContent}
+                                        width={'100%'}
+                                        height={'100%'}
+                                        controls
+                                    />
+                                </ImageChatBubble>
+                            }
                         } else {
-                            return <MyChatBubble key={message.messageId}
-                                                 time={formatTime(message.messageTime)}>{message.messageContent}</MyChatBubble>
+                            if (message.type === 1) {
+                                return <MyChatBubble key={message.messageId}
+                                                     time={formatTime(message.messageTime)}>{message.messageContent}</MyChatBubble>
+                            } else if (message.type === 2) {
+                                return <MyImageChatBubble key={message.messageId}
+                                                          time={formatTime(message.messageTime)}>
+                                    <Image src={message.messageContent} width={200}
+                                           height={250}></Image>
+                                </MyImageChatBubble>
+                            } else if (message.type === 4) {
+                                return <MyImageChatBubble key={message.messageId}
+                                                          time={formatTime(message.messageTime)}>
+                                    <ReactPlayer
+                                        url={message.messageContent}
+                                        width={'100%'}
+                                        height={'100%'}
+                                        controls
+                                    />
+                                </MyImageChatBubble>
+                            }
                         }
                     })
                 }

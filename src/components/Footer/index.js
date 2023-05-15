@@ -35,6 +35,7 @@ function Footer({animeProps, style, children, ...rest}) {
         const messageBody = JSON.parse(pack.messageBody)
         const messageInfo = {
             isAccept: false,
+            type: 1,
             messageContent: messageBody.content,
             messageId: pack.messageId,
             messageKey: pack.messageKey || '',
