@@ -105,8 +105,7 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                             } else if (message.type === 2) {
                                 return <ImageChatBubble key={message.messageId}
                                                         time={formatTime(message.messageTime)}>
-                                    <Image src={message.messageContent} width={200}
-                                           height={250}></Image>
+                                    <Image src={message.messageContent} width={200}></Image>
                                 </ImageChatBubble>
                             } else if (message.type === 4) {
                                 return <ImageChatBubble key={message.messageId}
@@ -114,7 +113,7 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                                     <ReactPlayer
                                         url={message.messageContent}
                                         width={'100%'}
-                                        height={'100%'}
+                                        // height={'100%'}
                                         controls
                                     />
                                 </ImageChatBubble>
@@ -126,8 +125,7 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                             } else if (message.type === 2) {
                                 return <MyImageChatBubble key={message.messageId}
                                                           time={formatTime(message.messageTime)}>
-                                    <Image src={message.messageContent} width={200}
-                                           height={250}></Image>
+                                    <Image src={message.messageContent} width={200}></Image>
                                 </MyImageChatBubble>
                             } else if (message.type === 4) {
                                 return <MyImageChatBubble key={message.messageId}
@@ -135,7 +133,7 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                                     <ReactPlayer
                                         url={message.messageContent}
                                         width={'100%'}
-                                        height={'100%'}
+                                        // height={'100%'}
                                         controls
                                     />
                                 </MyImageChatBubble>

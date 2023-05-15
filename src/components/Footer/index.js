@@ -45,10 +45,11 @@ function Footer({animeProps, style, children, ...rest}) {
             friendId: pack.toId,
             messageInfo
         }))
+
         dispatch(modifyMessageContent(''))
-        dispatch(syncConversationList([{
+        dispatch(syncConversationList( [{
             toId: pack.toId,
-            messsage: messageInfo
+            message: messageInfo
         }]))
     }
 

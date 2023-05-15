@@ -1,5 +1,4 @@
 import {createSlice} from "@reduxjs/toolkit";
-import _ from "lodash";
 
 const initialState = []
 
@@ -8,20 +7,26 @@ export const conversationListSlice = createSlice({
     initialState,
     reducers: {
         syncConversationList: (state, action) => {
-            action.payload = action.payload.filter(item => item.message !== undefined)
-            action.payload.forEach(item => {
-                if (state.length === 0) {
-                    state.push(item)
+            debugger
+            // action.payload.forEach(item => {
+            //     const existingFriend = state.find(friend => friend.toId === item.toId);
+            //     if (existingFriend) {
+            //         existingFriend.message = item.message;
+            //     } else {
+            //         state.push({...item});
+            //     }
+            // });
+
+            const updatedState = action.payload.reduce((newState, item) => {
+                const existingFriendIndex = newState.findIndex(friend => friend.toId === item.toId);
+                if (existingFriendIndex !== -1) {
+                    newState[existingFriendIndex] = {...newState[existingFriendIndex], message: item.message};
                 } else {
-                    state.forEach(friend => {
-                        if (friend.toId === item.toId) {
-                            friend.message = item.message
-                        } else {
-                            state.push(item)
-                        }
-                    })
+                    newState.push(item);
                 }
-            })
+                return newState;
+            }, [...state]);
+            return updatedState;
         }
     }
 })

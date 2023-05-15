@@ -7,6 +7,7 @@ import {message, Upload} from "antd";
 import {useSdk} from "../../sdk/SdkContext";
 import {useDispatch, useSelector} from "react-redux";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
+import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
 
 function AliYunOSSUpload({value, onChange, children}) {
 
@@ -83,6 +84,10 @@ function AliYunOSSUpload({value, onChange, children}) {
                         friendId: pack.toId,
                         messageInfo
                     }))
+                    dispatch(syncConversationList([{
+                        toId: pack.toId,
+                        message: messageInfo
+                    }]))
                 } else if (file.type.includes('video')) {
                     const pack = im.sendP2PVideoMessage(friendInfo.userId, fileInfo.url)
                     const messageBody = JSON.parse(pack.messageBody)
@@ -98,6 +103,10 @@ function AliYunOSSUpload({value, onChange, children}) {
                         friendId: pack.toId,
                         messageInfo
                     }))
+                    dispatch(syncConversationList([{
+                        toId: pack.toId,
+                        message: messageInfo
+                    }]))
                 }
             } else {
                 message.error(`${file.name} is upload failed`)

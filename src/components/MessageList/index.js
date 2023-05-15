@@ -27,6 +27,7 @@ function MessageList({children, ...rest}) {
     const im = useSdk()
 
     const conversationListStore = useSelector(state => state.conversationList)
+    console.log(conversationListStore)
 
     const [activeIndex, setActiveIndex] = useState(0)
     const [conversationList, setConversationList] = useState(conversationListStore)
@@ -44,10 +45,7 @@ function MessageList({children, ...rest}) {
 
     useEffect(() => {
 
-        // store.subscribe(()=>{
-        //     const messageList = store.getState().messageList
-        //
-        // })
+        setConversationList(conversationListStore);
 
         if (conversationSequence === null) {
             conversationSequence = 0
@@ -78,7 +76,7 @@ function MessageList({children, ...rest}) {
         //     PubSub.unsubscribe(addToken)
         // }
 
-    }, [conversationSequence, messageList])
+    }, [conversationSequence, conversationListStore])
 
 
     return (
@@ -100,7 +98,11 @@ function MessageList({children, ...rest}) {
                                 avatarStatus={item.status ? item.status : "online"}
                                 statusText={item.statusText ? item.statusText : '在线'}
                                 time={formatTime(item.message.messageTime)}
-                                message={item.message.messageContent}
+                                message={
+                                    item.message.type === 1 ? item.message.messageContent :
+                                        item.message.type === 2 ? "[图片]" :
+                                            item.message.type === 4 ? "[视频]" : item.message.messageContent
+                                }
                                 unreadCount={item.unreadCount}
                                 changeActive={changeHandler}
                             />
