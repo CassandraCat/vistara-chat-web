@@ -91,7 +91,24 @@ function Footer({animeProps, style, children, ...rest}) {
                         .then((result) => {
                             console.log('音频上传成功：', result);
                             // 处理上传成功的逻辑...
-
+                            const pack = im.sendP2PAudioMessage(friendInfo.userId, result.url)
+                            const messageBody = JSON.parse(pack.messageBody)
+                            const messageInfo = {
+                                isAccept: false,
+                                type: 3,
+                                messageContent: messageBody.content,
+                                messageId: pack.messageId,
+                                messageKey: pack.messageKey || '',
+                                messageTime: pack.messageTime
+                            }
+                            dispatch(modifyMessageList({
+                                friendId: pack.toId,
+                                messageInfo
+                            }))
+                            dispatch(syncConversationList([{
+                                toId: pack.toId,
+                                message: messageInfo
+                            }]))
                         })
                         .catch((error) => {
                             console.error('音频上传失败：', error);

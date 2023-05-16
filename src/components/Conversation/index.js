@@ -16,6 +16,7 @@ import ImageChatBubble from "../ImageChatBubble";
 import {Image} from 'antd';
 import ReactPlayer from 'react-player/lazy'
 import {PlayCircleOutlined} from "@ant-design/icons";
+import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
 
 
 function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
@@ -58,17 +59,22 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
 
         const P2PMessageToken = PubSub.subscribe("P2PMessage", (_, data) => {
             const messageBody = JSON.parse(data.messageBody)
+            const messageInfo = {
+                isAccept: true,
+                type: messageBody.type,
+                messageContent: messageBody.content,
+                messageId: data.messageId,
+                messageKey: data.messageKey,
+                messageTime: data.messageTime
+            }
             dispatch(modifyMessageList({
                 friendId: data.fromId,
-                messageInfo: {
-                    isAccept: true,
-                    type: messageBody.type,
-                    messageContent: messageBody.content,
-                    messageId: data.messageId,
-                    messageKey: data.messageKey,
-                    messageTime: data.messageTime
-                }
+                messageInfo
             }))
+            dispatch(syncConversationList([{
+                toId: data.fromId,
+                message: messageInfo
+            }]))
         })
 
         return () => {
@@ -107,6 +113,11 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                                                         time={formatTime(message.messageTime)}>
                                     <Image src={message.messageContent} width={200}></Image>
                                 </ImageChatBubble>
+                            } else if (message.type === 3) {
+                                return <ChatBubble key={message.messageId}
+                                                   time={formatTime(message.messageTime)}>
+                                    <VoiceMessage src={message.messageContent}/>
+                                </ChatBubble>
                             } else if (message.type === 4) {
                                 return <ImageChatBubble key={message.messageId}
                                                         time={formatTime(message.messageTime)}>
@@ -127,6 +138,11 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                                                           time={formatTime(message.messageTime)}>
                                     <Image src={message.messageContent} width={200}></Image>
                                 </MyImageChatBubble>
+                            } else if (message.type === 3) {
+                                return <MyChatBubble key={message.messageId}
+                                                     time={formatTime(message.messageTime)}>
+                                    <VoiceMessage src={message.messageContent} type={'mine'}/>
+                                </MyChatBubble>
                             } else if (message.type === 4) {
                                 return <MyImageChatBubble key={message.messageId}
                                                           time={formatTime(message.messageTime)}>

@@ -101,7 +101,8 @@ function MessageList({children, ...rest}) {
                                 message={
                                     item.message.type === 1 ? item.message.messageContent :
                                         item.message.type === 2 ? "[图片]" :
-                                            item.message.type === 4 ? "[视频]" : item.message.messageContent
+                                            item.message.type === 3 ? "[语音]" :
+                                                item.message.type === 4 ? "[视频]" : item.message.messageContent
                                 }
                                 unreadCount={item.unreadCount}
                                 changeActive={changeHandler}
