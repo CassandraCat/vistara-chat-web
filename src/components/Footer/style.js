@@ -25,5 +25,13 @@ const StyledFooter = styled(animated.footer)`
     width: 100%;
 `;
 
+const VoiceContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+`
+
 export default StyledFooter;
-export {IconContainer, StyledPopoverContent};
+export {IconContainer, StyledPopoverContent,VoiceContainer};
