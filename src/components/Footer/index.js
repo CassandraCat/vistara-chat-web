@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import PropTypes from "prop-types";
 import StyledFooter, {IconContainer, StyledPopoverContent, VoiceContainer} from "./style";
 
@@ -24,6 +24,7 @@ import OSS from "ali-oss"
 import axios from "axios";
 import {v4 as uuidv4} from 'uuid';
 
+let client = null;
 
 function Footer({animeProps, style, children, ...rest}) {
 
@@ -44,10 +45,10 @@ function Footer({animeProps, style, children, ...rest}) {
     const mediaRecorderRef = useRef(null);
     const chunksRef = useRef([]);
 
-    const getToken = async (audioArrayBuffer) => {
+    const getToken = async () => {
         // 设置客户端请求访问凭证的地址。
         await axios.get("http://localhost:3001/sts").then((token) => {
-            const client = new OSS({
+            client = new OSS({
                 // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。
                 region: 'oss-cn-hangzhou',
                 accessKeyId: token.data.AccessKeyId,
@@ -65,23 +66,6 @@ function Footer({animeProps, style, children, ...rest}) {
                     };
                 },
             });
-            // 使用临时访问凭证上传文件。
-            // 填写不包含Bucket名称在内的Object的完整路径，例如exampleobject.jpg。
-            // 填写本地文件的完整路径，例如D:\\example.jpg。
-            const uuid = uuidv4()
-            const fileName = `${uuid}.webm`; // 自定义文件名，根据需求进行修改
-            const folder = 'im-data'; // OSS 中的文件夹路径，根据需求进行修改
-            const blob = new Blob([audioArrayBuffer], {type: 'audio/webm'});
-            client.put(`${folder}/${fileName}`, blob)
-                .then((result) => {
-                    console.log('音频上传成功：', result);
-                    // 处理上传成功的逻辑...
-
-                })
-                .catch((error) => {
-                    console.error('音频上传失败：', error);
-                    // 处理上传失败的逻辑...
-                });
         });
     };
 
@@ -97,14 +81,28 @@ function Footer({animeProps, style, children, ...rest}) {
 
                 mediaRecorderRef.current.addEventListener('stop', () => {
                     const audioBlob = new Blob(chunksRef.current, {type: 'audio/webm'});
+                    // 使用临时访问凭证上传文件。
+                    // 填写不包含Bucket名称在内的Object的完整路径，例如exampleobject.jpg。
+                    // 填写本地文件的完整路径，例如D:\\example.jpg。
+                    const uuid = uuidv4()
+                    const fileName = `${uuid}.webm`; // 自定义文件名，根据需求进行修改
+                    const folder = 'im-data'; // OSS 中的文件夹路径，根据需求进行修改
+                    client.put(`${folder}/${fileName}`, audioBlob)
+                        .then((result) => {
+                            console.log('音频上传成功：', result);
+                            // 处理上传成功的逻辑...
+
+                        })
+                        .catch((error) => {
+                            console.error('音频上传失败：', error);
+                            // 处理上传失败的逻辑...
+                        });
 
                     // Read audioBlob using FileReader
                     const reader = new FileReader();
                     reader.onload = () => {
                         const audioArrayBuffer = reader.result
                         setAudioData(audioArrayBuffer)
-
-                        getToken(audioArrayBuffer)
                     };
                     reader.readAsArrayBuffer(audioBlob);
 
@@ -167,6 +165,10 @@ function Footer({animeProps, style, children, ...rest}) {
     const mouseUpHandler = () => {
         stopRecording()
     }
+
+    useEffect(() => {
+        getToken()
+    }, [])
 
     return (
         <StyledFooter style={{...style, ...animeProps}} {...rest}>

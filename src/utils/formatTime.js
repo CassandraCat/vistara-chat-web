@@ -40,3 +40,18 @@ export const formatTime = (time) => {
     }
     return time
 }
+
+export const formatDuration = (duration) => {
+    // 👇️ 获取完整分钟数
+    const minutes = Math.floor(duration / 60)
+
+    // 👇️ 获得剩余的秒数
+    const seconds = Math.floor(duration % 60)
+
+    function padTo2Digits(num) {
+        return num.toString().padStart(2, '0')
+    }
+
+    // ✅ 格式化为 MM:SS
+    return `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`
+}

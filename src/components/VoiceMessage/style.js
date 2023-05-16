@@ -24,6 +24,8 @@ const typeVariants = {
 };
 
 const StyledVoiceMessage = styled.div`
+    width: ${({size}) => size};
+    height: 20px;
     display: flex;
     align-items: center;
 

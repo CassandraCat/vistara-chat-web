@@ -90,7 +90,7 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
             <Conversations style={convsAnimeProps}>
                 <ChatBubble time="昨天 下午14：26">Hi 小宇，忙什么呢？</ChatBubble>
                 <ChatBubble time="昨天 下午18：30">
-                    <VoiceMessage time="01:24"/>
+                    <VoiceMessage src={"https://vistara.oss-cn-hangzhou.aliyuncs.com/im-data/audio.webm"}/>
                 </ChatBubble>
                 <MyChatBubble time="昨天 下午16：30">
                     明天约一把王者荣耀，不连赢5把不罢休 🤘
