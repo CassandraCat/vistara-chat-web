@@ -15,7 +15,9 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.4.2",
+    "ali-oss": "^6.17.1",
     "antd": "^5.4.7",
+    "axios": "^1.4.0",
     "base-64": "^1.0.0",
     "crypto-js": "^4.1.1",
     "hygen": "^6.2.11",
@@ -34,7 +36,8 @@
     "react-tsparticles": "^2.9.3",
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.5",
-    "tsparticles": "^2.9.3"
+    "tsparticles": "^2.9.3",
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

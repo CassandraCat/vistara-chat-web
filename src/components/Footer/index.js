@@ -18,9 +18,12 @@ import {useSdk} from "../../sdk/SdkContext";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
 import {modifyMessageContent} from "../../store/festures/message/messageContentSlice";
 import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
-import {HighlightOutlined} from "@ant-design/icons";
-import {faCommentDots, faFolder, faKeyboard} from "@fortawesome/free-solid-svg-icons";
+import {faKeyboard} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import OSS from "ali-oss"
+import axios from "axios";
+import {v4 as uuidv4} from 'uuid';
+
 
 function Footer({animeProps, style, children, ...rest}) {
 
@@ -41,6 +44,47 @@ function Footer({animeProps, style, children, ...rest}) {
     const mediaRecorderRef = useRef(null);
     const chunksRef = useRef([]);
 
+    const getToken = async (audioArrayBuffer) => {
+        // 设置客户端请求访问凭证的地址。
+        await axios.get("http://localhost:3001/sts").then((token) => {
+            const client = new OSS({
+                // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。
+                region: 'oss-cn-hangzhou',
+                accessKeyId: token.data.AccessKeyId,
+                accessKeySecret: token.data.AccessKeySecret,
+                stsToken: token.data.SecurityToken,
+                // 填写Bucket名称。
+                bucket: "vistara",
+                // 刷新临时访问凭证。
+                refreshSTSToken: async () => {
+                    const refreshToken = await axios.get("http://localhost:3001/sts");
+                    return {
+                        accessKeyId: refreshToken.AccessKeyId,
+                        accessKeySecret: refreshToken.AccessKeySecret,
+                        stsToken: refreshToken.SecurityToken,
+                    };
+                },
+            });
+            // 使用临时访问凭证上传文件。
+            // 填写不包含Bucket名称在内的Object的完整路径，例如exampleobject.jpg。
+            // 填写本地文件的完整路径，例如D:\\example.jpg。
+            const uuid = uuidv4()
+            const fileName = `${uuid}.webm`; // 自定义文件名，根据需求进行修改
+            const folder = 'im-data'; // OSS 中的文件夹路径，根据需求进行修改
+            const blob = new Blob([audioArrayBuffer], {type: 'audio/webm'});
+            client.put(`${folder}/${fileName}`, blob)
+                .then((result) => {
+                    console.log('音频上传成功：', result);
+                    // 处理上传成功的逻辑...
+
+                })
+                .catch((error) => {
+                    console.error('音频上传失败：', error);
+                    // 处理上传失败的逻辑...
+                });
+        });
+    };
+
     const startRecording = () => {
         navigator.mediaDevices.getUserMedia({audio: true})
             .then(stream => {
@@ -57,8 +101,10 @@ function Footer({animeProps, style, children, ...rest}) {
                     // Read audioBlob using FileReader
                     const reader = new FileReader();
                     reader.onload = () => {
-                        const audioArrayBuffer = reader.result;
-                        setAudioData(audioArrayBuffer);
+                        const audioArrayBuffer = reader.result
+                        setAudioData(audioArrayBuffer)
+
+                        getToken(audioArrayBuffer)
                     };
                     reader.readAsArrayBuffer(audioBlob);
 
@@ -158,7 +204,7 @@ function Footer({animeProps, style, children, ...rest}) {
             {
                 voidActive && (
                     <VoiceContainer>
-                        <FontAwesomeIcon icon={faKeyboard} style={{fontSize: "36px", color: '#bfa'}}
+                        <FontAwesomeIcon icon={faKeyboard} style={{fontSize: "36px", color: 'skyblue'}}
                                          onClick={changeToText}/>
                         <Button shape={'rect'} size={'90%'} onMouseDown={mouseDownHandler}
                                 onMouseUp={mouseUpHandler}>按住说话</Button>
