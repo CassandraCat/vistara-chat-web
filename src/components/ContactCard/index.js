@@ -15,6 +15,7 @@ function ContactCard({contact, children, ...rest}) {
         im.getUserInfo([contact.toId]).then(result => {
             setContactInfo({...result.data.userDataItems[0]})
         }).catch(err => {
+            debugger
             throw new Error(err)
         })
     }, [contact.toId])
@@ -26,7 +27,7 @@ function ContactCard({contact, children, ...rest}) {
 
     return (
         <StyledContactCard {...rest} onClick={transformInfo}>
-            <Avatar src={contactInfo.photo ? contact.photo : face} status="online"/>
+            <Avatar src={contactInfo?.photo ? contactInfo.photo : face} status="online"/>
             <Name>{contact.remark ? contact.remark : contact.toId}</Name>
             <Intro>{contactInfo.selfSignature}</Intro>
         </StyledContactCard>

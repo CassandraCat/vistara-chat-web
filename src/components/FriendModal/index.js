@@ -25,6 +25,7 @@ function FriendModal({children, ...rest}) {
     const navigateToMessage = () => {
         dispatch(syncConversationList([{
             toId: friendModalInfo.userId,
+            avatarSrc: friendModalInfo.photo,
             message: messageInfo ? messageInfo[messageInfo.length - 1] : {}
         }]))
         // PubSub.publish('addConversation', friendModalInfo)

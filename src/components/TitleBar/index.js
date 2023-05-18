@@ -28,7 +28,7 @@ function TitleBar({
 
     return (
         <StyledTitleBar style={{...style, ...animeProps}} {...rest}>
-            <Avatar onClick={onAvatarClick} status="online" src={face}/>
+            <Avatar onClick={onAvatarClick} status="online" src={toinfo.photo ? toinfo.photo : face}/>
             <Title>
                 <Paragraph size="large">{toinfo?.userId}</Paragraph>
                 <Paragraph type="secondary">

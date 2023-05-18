@@ -40,6 +40,7 @@ function ContactList({children, ...rest}) {
             window.localStorage.setItem("friendSequence", friendSequence)
         }
         im.syncFriendshipList(friendSequence, 100).then((result) => {
+            debugger
             if (result.data.maxSequence != null) {
                 friendSequence = result.data.maxSequence
                 window.localStorage.setItem("friendSequence", friendSequence)
@@ -48,9 +49,9 @@ function ContactList({children, ...rest}) {
                 friendList.forEach(friend => {
                     result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
                 })
-                setTimeout(() => {
+                // setTimeout(() => {
                     dispatch(syncFriendList(result.data.dataList))
-                }, 0)
+                // }, 0)
                 setContacts(prevState => [...prevState, ...result.data.dataList])
             }
         }).catch((error) => {

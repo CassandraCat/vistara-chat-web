@@ -19,6 +19,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Avatar from "components/Avatar";
 import Paragraph from "components/Paragraph";
+import AgoraUIKit from 'agora-react-uikit';
+
 
 import "styled-components/macro";
 

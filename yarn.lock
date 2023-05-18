@@ -5380,6 +5380,63 @@ __metadata:
   languageName: node
   linkType: hard
 
+"agora-react-uikit@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "agora-react-uikit@npm:1.2.0"
+  dependencies:
+    agora-rtc-react: ^1.1.3
+    agora-rtm-react: ^1.1.2
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 606a042c12214c5723b6a2767a96b6aec434007b3fd8a300f272d9cb45a9211380902c8d42fd4cd9d8bea145cc217bfe626f81957c5163c91405ffd8b71c298a
+  languageName: node
+  linkType: hard
+
+"agora-rtc-react@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "agora-rtc-react@npm:1.1.3"
+  dependencies:
+    agora-rtc-sdk-ng: ^4.3.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 5fb11c75b274394b7b633554df60f45e9e79c1061634ce1a76b8d093714d99fcb0129866b02017ad4756c48b0cc9aa918bb82fe23636863522cb2cc22dc499f8
+  languageName: node
+  linkType: hard
+
+"agora-rtc-sdk-ng@npm:^4.3.0":
+  version: 4.17.2
+  resolution: "agora-rtc-sdk-ng@npm:4.17.2"
+  dependencies:
+    agora-rte-extension: ^1.2.3
+  checksum: 8c32c2cc9a7c96d279df2f2ff9a5bc7285e64947796f25d6bac287ff11091dd8cffba463db0d72bab4890b793aa5328b260659110bab29ccc8187b17aaac3b99
+  languageName: node
+  linkType: hard
+
+"agora-rte-extension@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "agora-rte-extension@npm:1.2.3"
+  checksum: 5b53a2f08720a17e7dac5dc35c3d4c539a5eabe9e20a4da2bf08c666072dc11e90cac6b92e2b1ccbd4516c70cf4934ddfe13d9863553e1e36949a7b138cde96a
+  languageName: node
+  linkType: hard
+
+"agora-rtm-react@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "agora-rtm-react@npm:1.1.2"
+  dependencies:
+    agora-rtm-sdk: 1.4.3-203
+  peerDependencies:
+    react: ^16.0.0 || ^17 || ^18
+  checksum: 5c267a4563cc070ded4cd1620cf648345bc6bbab4327bebedf1c97253c780fc3fbd7a8e5d4cbad6dce47b23d16e9e32305598de94d2a699f2bf06ef507643095
+  languageName: node
+  linkType: hard
+
+"agora-rtm-sdk@npm:1.4.3-203":
+  version: 1.4.3-203
+  resolution: "agora-rtm-sdk@npm:1.4.3-203"
+  checksum: 241fbc44c4060100da25f76b895c9e7fbf9c738a024eeee4ac57eeda97b07ae34082e9da981d563b09e9a6077374f059f223e9aec881efcc6bc45098ad95c084
+  languageName: node
+  linkType: hard
+
 "airbnb-js-shims@npm:^2.2.1":
   version: 2.2.1
   resolution: "airbnb-js-shims@npm:2.2.1"
@@ -21294,6 +21351,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.3.0
     "@testing-library/user-event": ^14.4.2
+    agora-react-uikit: ^1.2.0
     ali-oss: ^6.17.1
     antd: ^5.4.7
     axios: ^1.4.0

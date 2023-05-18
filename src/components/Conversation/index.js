@@ -4,18 +4,15 @@ import StyledConversation, {Conversations, MyChatBubble, MyImageChatBubble} from
 import TitleBar from "components/TitleBar";
 import ChatBubble from "components/ChatBubble";
 import VoiceMessage from "components/VoiceMessage";
-import Emoji from "components/Emoji";
 import Footer from "components/Footer";
 import {useSpring} from "react-spring";
 import PubSub from "pubsub-js";
 import {useDispatch, useSelector} from "react-redux";
 import {formatTime} from "../../utils/formatTime";
 import {modifyMessageList} from "../../store/festures/message/messageSlice";
-import note4 from "assets/images/note-4.jpg"
 import ImageChatBubble from "../ImageChatBubble";
 import {Image} from 'antd';
 import ReactPlayer from 'react-player/lazy'
-import {PlayCircleOutlined} from "@ant-design/icons";
 import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
 
 
@@ -94,14 +91,6 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                 toinfo={friendInfo}
             />
             <Conversations style={convsAnimeProps}>
-                <ChatBubble time="昨天 下午14：26">Hi 小宇，忙什么呢？</ChatBubble>
-                <ChatBubble time="昨天 下午18：30">
-                    <VoiceMessage src={"https://vistara.oss-cn-hangzhou.aliyuncs.com/im-data/audio.webm"}/>
-                </ChatBubble>
-                <MyChatBubble time="昨天 下午16：30">
-                    明天约一把王者荣耀，不连赢5把不罢休 🤘
-                    <Emoji label="smile">🤘</Emoji>
-                </MyChatBubble>
                 {
                     messageList && messageList.map(message => {
                         if (message.isAccept) {
