@@ -7,7 +7,6 @@ export const conversationListSlice = createSlice({
     initialState,
     reducers: {
         syncConversationList: (state, action) => {
-            debugger
             // action.payload.forEach(item => {
             //     const existingFriend = state.find(friend => friend.toId === item.toId);
             //     if (existingFriend) {

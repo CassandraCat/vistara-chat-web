@@ -46,10 +46,34 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
         im.acceptVideoCall(requestUserId, "我已接受你的视频请求")
     }
 
+    const stopLocalStream = () => {
+        const localStream = localVideoRef.current.srcObject
+        const tracks = localStream.getTracks()
+
+        tracks.forEach((track) => {
+            track.stop()
+        })
+    }
+
+    const closePeerConnection = () => {
+        pc.value.close()
+    }
+
+    const clearVideoElements = () => {
+        localVideoRef.current.srcObject = null
+        remoteVideoRef.current.srcObject = null
+    }
+
+    const endVideoChat = () => {
+        stopLocalStream()
+        closePeerConnection()
+        clearVideoElements()
+    }
+
     const initStream = () => {
         return new Promise((resolve, reject) => {
             navigator.mediaDevices.getUserMedia({
-                audio: true,
+                audio: {echoCancellation: false},
                 video: true,
             }).then(function (value) {
                 myStream.value = value
@@ -100,12 +124,29 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
         message.error(error)
     }
 
+    const handleHangOff = () => {
+        if (isRequest) {
+            if (pc.value) {
+                im.hangUpVideoCall(friendInfo.userId, "我已结束通话")
+                endVideoChat()
+            } else {
+                im.cancelVideoCall(friendInfo.userId, "我已取消通话")
+            }
+        } else {
+            if (pc.value) {
+                im.hangUpVideoCall(requestUserId, "我已结束通话")
+                endVideoChat()
+            } else {
+                im.rejectVideoCall(requestUserId, "我已拒绝通话")
+            }
+        }
+        onHangOffClicked()
+    }
 
     useEffect(() => {
         const acceptCallToken = PubSub.subscribe("AcceptCall", (_, data) => {
             setIsAccept(true)
             initStream().then(() => {
-                debugger
                 if (pc.value === undefined) {
                     createPeerConnection()
                 }
@@ -142,12 +183,35 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
             }
         })
 
+        const hangUpCallToken = PubSub.subscribe("HangUpCall", (_, data) => {
+            if (pc.value) {
+                endVideoChat()
+            }
+            onHangOffClicked()
+        })
+
+        const cancelCallToken = PubSub.subscribe("CancelCall", (_, data) => {
+            if (pc.value) {
+                endVideoChat()
+            }
+            onHangOffClicked()
+        })
+
+        const rejectCallToken = PubSub.subscribe("RejectCall", (_, data) => {
+            if (pc.value) {
+                endVideoChat()
+            }
+            onHangOffClicked()
+        })
 
         return () => {
             PubSub.unsubscribe(acceptCallToken)
             PubSub.unsubscribe(transmitOfferToken)
             PubSub.unsubscribe(transmitAnswerToken)
             PubSub.unsubscribe(transmitIceToken)
+            PubSub.unsubscribe(hangUpCallToken)
+            PubSub.unsubscribe(cancelCallToken)
+            PubSub.unsubscribe(rejectCallToken)
         }
     }, [])
 
@@ -205,7 +269,7 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
                     )
                 }
                 <Action type="hangoff">
-                    <FontAwesomeIcon icon={faPhoneSlash} onClick={onHangOffClicked}/>
+                    <FontAwesomeIcon icon={faPhoneSlash} onClick={handleHangOff}/>
                 </Action>
                 {
                     (!isAccept && !isRequest) && (

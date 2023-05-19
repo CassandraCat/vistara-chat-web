@@ -8,7 +8,6 @@ export const friendListSlice = createSlice({
     initialState,
     reducers: {
         syncFriendList: (state, action) => {
-            debugger
             // const filteredPayload = action.payload.filter(item => state.some(friend => !_.isEqual(friend, item)));
             return [...state, ...action.payload];
         }

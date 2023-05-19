@@ -15,7 +15,6 @@ function ContactCard({contact, children, ...rest}) {
         im.getUserInfo([contact.toId]).then(result => {
             setContactInfo({...result.data.userDataItems[0]})
         }).catch(err => {
-            debugger
             throw new Error(err)
         })
     }, [contact.toId])

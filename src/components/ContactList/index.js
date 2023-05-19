@@ -40,7 +40,6 @@ function ContactList({children, ...rest}) {
             window.localStorage.setItem("friendSequence", friendSequence)
         }
         im.syncFriendshipList(friendSequence, 100).then((result) => {
-            debugger
             if (result.data.maxSequence != null) {
                 friendSequence = result.data.maxSequence
                 window.localStorage.setItem("friendSequence", friendSequence)
