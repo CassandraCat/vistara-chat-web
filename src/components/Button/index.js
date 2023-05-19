@@ -25,7 +25,7 @@ function Button({
 
 Button.propTypes = {
     children: PropTypes.any,
-    type: PropTypes.oneOf(["primary"]),
+    type: PropTypes.oneOf(["primary","accept","hangoff"]),
     shape: PropTypes.oneOf(["circle", "rect"]),
     size: PropTypes.string,
 };

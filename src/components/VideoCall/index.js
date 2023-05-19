@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import PropTypes from "prop-types";
 import StyledVideoCall, {
     Minimize,
     Actions,
     Action,
     Self,
-    VideoCallAlert,
+    VideoCallAlert, StyledVideos, LocalVideo, RemoteVideo,
 } from "./style";
 import videoCaller from "assets/images/video-caller.jpg";
 import face from "assets/images/face-male-1.jpg";
@@ -15,17 +15,141 @@ import {
     faMicrophone,
     faPhoneSlash,
     faVolumeMute,
-    faVideo,
+    faVideo, faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import Avatar from "components/Avatar";
 import Paragraph from "components/Paragraph";
-import AgoraUIKit from 'agora-react-uikit';
 
 
 import "styled-components/macro";
+import {useSdk} from "../../sdk/SdkContext";
+import PubSub from "pubsub-js";
+import {useSelector} from "react-redux";
+import {message} from "antd";
 
-function VideoCall({children, onHangOffClicked, ...rest}) {
+function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...rest}) {
+
     const [fullScreen, setFullScreen] = useState(true);
+    const [isAccept, setIsAccept] = useState(false)
+
+    const friendInfo = useSelector(state => state.friendInfo)
+
+    const localVideoRef = useRef(null)
+    const remoteVideoRef = useRef(null)
+    const myStream = useRef(null)
+    const pc = useRef(null)
+
+    const im = useSdk()
+
+    const onAcceptCallHandler = () => {
+        setIsAccept(true)
+        im.acceptVideoCall(requestUserId, "我已接受你的视频请求")
+    }
+
+    const initStream = () => {
+        return new Promise((resolve, reject) => {
+            navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true,
+            }).then(function (value) {
+                myStream.value = value
+                localVideoRef.current.srcObject = value  // 自己的流
+            }).then(() => resolve())
+                .catch(() => reject());
+        })
+    }
+
+    const createPeerConnection = () => {
+        pc.value = new RTCPeerConnection(null);
+        pc.value.onicecandidate = handleIceCandidate;
+        pc.value.onaddstream = handleRemoteStreamAdded;
+        for (const trac of myStream.value.getTracks()) {
+            pc.value.addTrack(trac, myStream.value);
+        }
+    }
+
+    const handleIceCandidate = (event) => {
+        if (event.candidate) {
+            if (isRequest) {
+                im.transmitIce(friendInfo.userId, event.candidate)
+            } else {
+                im.transmitIce(requestUserId, event.candidate)
+            }
+        }
+    }
+
+    const handleRemoteStreamAdded = (event) => {
+        remoteVideoRef.current.srcObject = event.stream
+    }
+
+    const createOfferAndSendMessage = (sessionDescription) => {
+        pc.value.setLocalDescription(sessionDescription)
+        im.transmitOffer(friendInfo.userId, sessionDescription)
+    }
+
+    const handleCreateOfferError = (error) => {
+        message.error(error)
+    }
+
+    const createAnswerAndSendMessage = (sessionDescription) => {
+        pc.value.setLocalDescription(sessionDescription)
+        im.transmitAnswer(requestUserId, sessionDescription)
+    }
+
+    const handleCreateAnswerError = (error) => {
+        message.error(error)
+    }
+
+
+    useEffect(() => {
+        const acceptCallToken = PubSub.subscribe("AcceptCall", (_, data) => {
+            setIsAccept(true)
+            initStream().then(() => {
+                debugger
+                if (pc.value === undefined) {
+                    createPeerConnection()
+                }
+                pc.value.createOffer().then(createOfferAndSendMessage, handleCreateOfferError)
+            })
+        })
+
+        const transmitOfferToken = PubSub.subscribe("TransmitOffer", (_, data) => {
+            const messageBody = JSON.parse(data.messageBody)
+            const content = messageBody.content
+            initStream().then(() => {
+                if (pc.value === undefined) {
+                    createPeerConnection()
+                }
+                pc.value.setRemoteDescription(new RTCSessionDescription(content));
+                pc.value.createAnswer().then(createAnswerAndSendMessage, handleCreateAnswerError)
+            })
+        })
+
+        const transmitAnswerToken = PubSub.subscribe("TransmitAnswer", (_, data) => {
+            const messageBody = JSON.parse(data.messageBody)
+            const content = messageBody.content
+            pc.value.setRemoteDescription(new RTCSessionDescription(content));
+        })
+
+        const transmitIceToken = PubSub.subscribe("TransmitIce", (_, data) => {
+            const messageBody = JSON.parse(data.messageBody)
+            const content = messageBody.content
+            if (pc.value) {
+                pc.value.addIceCandidate(new RTCIceCandidate({
+                    sdpMLineIndex: content.sdpMLineIndex,
+                    candidate: content.candidate
+                }))
+            }
+        })
+
+
+        return () => {
+            PubSub.unsubscribe(acceptCallToken)
+            PubSub.unsubscribe(transmitOfferToken)
+            PubSub.unsubscribe(transmitAnswerToken)
+            PubSub.unsubscribe(transmitIceToken)
+        }
+    }, [])
 
     if (!fullScreen) {
         return (
@@ -73,17 +197,40 @@ function VideoCall({children, onHangOffClicked, ...rest}) {
                 <FontAwesomeIcon icon={faCompressAlt}/>
             </Minimize>
             <Actions>
-                <Action>
-                    <FontAwesomeIcon icon={faMicrophone}/>
-                </Action>
+                {
+                    (isAccept || isRequest) && (
+                        <Action>
+                            <FontAwesomeIcon icon={faMicrophone}/>
+                        </Action>
+                    )
+                }
                 <Action type="hangoff">
                     <FontAwesomeIcon icon={faPhoneSlash} onClick={onHangOffClicked}/>
                 </Action>
-                <Action>
-                    <FontAwesomeIcon icon={faVolumeMute}/>
-                </Action>
+                {
+                    (!isAccept && !isRequest) && (
+                        <Action type="accept">
+                            <FontAwesomeIcon icon={faCheck} onClick={onAcceptCallHandler}></FontAwesomeIcon>
+                        </Action>
+                    )
+                }
+                {
+                    (isAccept || isRequest) && (
+                        <Action>
+                            <FontAwesomeIcon icon={faVolumeMute}/>
+                        </Action>
+                    )
+                }
             </Actions>
-            <Self src={face} size="140px"/>
+            <StyledVideos>
+                <LocalVideo ref={localVideoRef} autoPlay playsInline></LocalVideo>
+                <RemoteVideo ref={remoteVideoRef} autoPlay playsInline></RemoteVideo>
+            </StyledVideos>
+            {
+                !isAccept && (
+                    <Self src={face} size="140px"/>
+                )
+            }
         </StyledVideoCall>
     );
 }

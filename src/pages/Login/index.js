@@ -173,6 +173,46 @@ function Login({children, ...rest}) {
         },
         onConversationUpdate: (e) => {
             // 更新会话通知
+        },
+        onCallVideo: (e)=>{
+            //视频通话请求
+            const message = JSON.parse(e)
+            PubSub.publish("CallVideo", message.data)
+        },
+        onAcceptCall: (e)=>{
+            //接受通话
+            const message = JSON.parse(e)
+            PubSub.publish("AcceptCall", message.data)
+        },
+        onRejectCall: (e)=>{
+            //拒绝通话
+            const message = JSON.parse(e)
+            PubSub.publish("RejectCall", message.data)
+        },
+        onHangUpCall: (e)=>{
+            //挂断通话
+            const message = JSON.parse(e)
+            PubSub.publish("HangUpCall", message.data)
+        },
+        onCancelCall: (e)=>{
+            // 取消通话
+            const message = JSON.parse(e)
+            PubSub.publish("CancelCall", message.data)
+        },
+        onTransmitIce: (e)=>{
+            //同步ICE
+            const message = JSON.parse(e)
+            PubSub.publish("TransmitIce", message.data)
+        },
+        onTransmitOffer: (e)=>{
+            //发送Offer
+            const message = JSON.parse(e)
+            PubSub.publish("TransmitOffer", message.data)
+        },
+        onTransmitAnswer: (e)=>{
+            // 发送Answer
+            const message = JSON.parse(e)
+            PubSub.publish("TransmitAnswer", message.data)
         }
     }
 

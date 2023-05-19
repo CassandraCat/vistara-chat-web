@@ -18,10 +18,13 @@ import {useAuth} from "../../guard/AuthProvider";
 import PubSub from "pubsub-js"
 import Add from "../Add";
 import FriendModal from "../FriendModal";
+import {useSdk} from "../../sdk/SdkContext";
+import {useSelector} from "react-redux";
 
 function ChatApp({children, ...rest}) {
 
     const {user} = useAuth();
+    const im = useSdk()
 
     const [showDrawer, setShowDrawer] = useState(false);
     const [videoCalling, setVideoCalling] = useState(false);
@@ -30,6 +33,10 @@ function ChatApp({children, ...rest}) {
     const [isSearch, setIsSearch] = useState(false)
     const [isShowFriendModal, setIsShowFriendModal] = useState(false)
     const [friendModalInfo, setFriendModalInfo] = useState(null)
+    const [videoCallRequest, setVideoCallRequest] = useState(false)
+    const [requestUserId, setRequestUserId] = useState("")
+
+    const friendInfo = useSelector(state => state.friendInfo)
 
     const location = useLocation();
 
@@ -55,6 +62,12 @@ function ChatApp({children, ...rest}) {
         location.pathname
     )
 
+    const videoCallHandler = () => {
+        setVideoCalling(true)
+        setVideoCallRequest(true)
+        im.requestVideoCall(friendInfo.userId, "请求视频通话！")
+    }
+
     useEffect(() => {
 
         const showMessageToken = PubSub.subscribe("showMessage", (_, data) => {
@@ -75,6 +88,10 @@ function ChatApp({children, ...rest}) {
         const closeFriendModalToken = PubSub.subscribe("closeFriendModal", (_, data) => {
             setIsShowFriendModal(data)
         })
+        const callVideoToken = PubSub.subscribe("CallVideo", (_, data) => {
+            setVideoCalling(true)
+            setRequestUserId(data.fromId)
+        })
         if (!isMessageList) {
             setShowConversation(false)
         }
@@ -90,6 +107,8 @@ function ChatApp({children, ...rest}) {
             PubSub.unsubscribe(openToken)
             PubSub.unsubscribe(friendModalInfoToken)
             PubSub.unsubscribe(closeFriendModalToken)
+            PubSub.unsubscribe(callVideoToken)
+
         }
 
     }, [isMessageList, isContactList])
@@ -119,13 +138,14 @@ function ChatApp({children, ...rest}) {
             </Sidebar>
             <Content>
                 {videoCalling && (
-                    <VideoCall onHangOffClicked={() => setVideoCalling(false)}/>
+                    <VideoCall isRequest={videoCallRequest} requestUserId={requestUserId}
+                               onHangOffClicked={() => setVideoCalling(false)}/>
                 )}
 
                 {
                     showConversation && isMessageList && (<Conversation
                         onAvatarClick={() => setShowDrawer(true)}
-                        onVideoClicked={() => setVideoCalling(true)}
+                        onVideoClicked={videoCallHandler}
                     />)
                 }
 
