@@ -81,40 +81,41 @@ function Footer({animeProps, style, children, ...rest}) {
 
                 mediaRecorderRef.current.addEventListener('stop', () => {
                     const audioBlob = new Blob(chunksRef.current, {type: 'audio/webm'});
-                    // 使用临时访问凭证上传文件。
-                    // 填写不包含Bucket名称在内的Object的完整路径，例如exampleobject.jpg。
-                    // 填写本地文件的完整路径，例如D:\\example.jpg。
-                    const uuid = uuidv4()
-                    const fileName = `${uuid}.webm`; // 自定义文件名，根据需求进行修改
-                    const folder = 'im-data'; // OSS 中的文件夹路径，根据需求进行修改
-                    client.put(`${folder}/${fileName}`, audioBlob)
-                        .then((result) => {
-                            console.log('音频上传成功：', result);
-                            // 处理上传成功的逻辑...
-                            const pack = im.sendP2PAudioMessage(friendInfo.userId, result.url)
-                            const messageBody = JSON.parse(pack.messageBody)
-                            const messageInfo = {
-                                isAccept: false,
-                                type: 3,
-                                messageContent: messageBody.content,
-                                messageId: pack.messageId,
-                                messageKey: pack.messageKey || '',
-                                messageTime: pack.messageTime
-                            }
-                            dispatch(modifyMessageList({
-                                friendId: pack.toId,
-                                messageInfo
-                            }))
-                            dispatch(syncConversationList([{
-                                toId: pack.toId,
-                                message: messageInfo
-                            }]))
-                        })
-                        .catch((error) => {
-                            console.error('音频上传失败：', error);
-                            // 处理上传失败的逻辑...
-                        });
-
+                    getToken().then(() => {
+                        // 使用临时访问凭证上传文件。
+                        // 填写不包含Bucket名称在内的Object的完整路径，例如exampleobject.jpg。
+                        // 填写本地文件的完整路径，例如D:\\example.jpg。
+                        const uuid = uuidv4()
+                        const fileName = `${uuid}.webm`; // 自定义文件名，根据需求进行修改
+                        const folder = 'im-data'; // OSS 中的文件夹路径，根据需求进行修改
+                        client.put(`${folder}/${fileName}`, audioBlob)
+                            .then((result) => {
+                                console.log('音频上传成功：', result);
+                                // 处理上传成功的逻辑...
+                                const pack = im.sendP2PAudioMessage(friendInfo.userId, result.url)
+                                const messageBody = JSON.parse(pack.messageBody)
+                                const messageInfo = {
+                                    isAccept: false,
+                                    type: 3,
+                                    messageContent: messageBody.content,
+                                    messageId: pack.messageId,
+                                    messageKey: pack.messageKey || '',
+                                    messageTime: pack.messageTime
+                                }
+                                dispatch(modifyMessageList({
+                                    friendId: pack.toId,
+                                    messageInfo
+                                }))
+                                dispatch(syncConversationList([{
+                                    toId: pack.toId,
+                                    message: messageInfo
+                                }]))
+                            })
+                            .catch((error) => {
+                                console.error('音频上传失败：', error);
+                                // 处理上传失败的逻辑...
+                            });
+                    })
                     // Read audioBlob using FileReader
                     const reader = new FileReader();
                     reader.onload = () => {
@@ -182,10 +183,6 @@ function Footer({animeProps, style, children, ...rest}) {
     const mouseUpHandler = () => {
         stopRecording()
     }
-
-    useEffect(() => {
-        getToken()
-    }, [])
 
     return (
         <StyledFooter style={{...style, ...animeProps}} {...rest}>
