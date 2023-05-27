@@ -24,13 +24,17 @@ import Paragraph from "components/Paragraph";
 import "styled-components/macro";
 import {useSdk} from "../../sdk/SdkContext";
 import PubSub from "pubsub-js";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {message} from "antd";
+import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
+import {modifyMessageList} from "../../store/festures/message/messageSlice";
 
 function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...rest}) {
 
     const [fullScreen, setFullScreen] = useState(true);
     const [isAccept, setIsAccept] = useState(false)
+    const [isRemoteMuted, setIsRemoteMuted] = useState(false)
+    const [isLocalMuted, setIsLocalMuted] = useState(false)
 
     const friendInfo = useSelector(state => state.friendInfo)
 
@@ -40,6 +44,7 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
     const pc = useRef(null)
 
     const im = useSdk()
+    const dispatch = useDispatch()
 
     const onAcceptCallHandler = () => {
         setIsAccept(true)
@@ -73,22 +78,24 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
     const initStream = () => {
         return new Promise((resolve, reject) => {
             navigator.mediaDevices.getUserMedia({
-                audio: {echoCancellation: false},
+                audio: true,
                 video: true,
             }).then(function (value) {
                 myStream.value = value
                 localVideoRef.current.srcObject = value  // 自己的流
             }).then(() => resolve())
-                .catch(() => reject());
+                .catch(() => reject())
         })
     }
 
     const createPeerConnection = () => {
         pc.value = new RTCPeerConnection(null);
-        pc.value.onicecandidate = handleIceCandidate;
-        pc.value.onaddstream = handleRemoteStreamAdded;
+        pc.value.onicecandidate = handleIceCandidate
+        pc.value.onaddstream = handleRemoteStreamAdded
         for (const trac of myStream.value.getTracks()) {
-            pc.value.addTrack(trac, myStream.value);
+            // const constraints = {echoCancellation: true}
+            const sender = pc.value.addTrack(trac, myStream.value)
+            // sender.applyConstraints(constraints)
         }
     }
 
@@ -127,20 +134,106 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
     const handleHangOff = () => {
         if (isRequest) {
             if (pc.value) {
-                im.hangUpVideoCall(friendInfo.userId, "我已结束通话")
+                const pack = im.hangUpVideoCall(friendInfo.userId, "通话结束")
+                const messageBody = JSON.parse(pack.messageBody)
+                const messageInfo = {
+                    isAccept: false,
+                    type: 5,
+                    messageContent: messageBody.content,
+                    messageId: pack.messageId,
+                    messageKey: pack.messageKey || '',
+                    messageTime: pack.messageTime
+                }
                 endVideoChat()
+                dispatch(modifyMessageList({
+                    friendId: pack.toId,
+                    messageInfo
+                }))
+                dispatch(syncConversationList([{
+                    toId: pack.toId,
+                    message: messageInfo
+                }]))
             } else {
-                im.cancelVideoCall(friendInfo.userId, "我已取消通话")
+                const pack = im.cancelVideoCall(friendInfo.userId, "已取消")
+                const messageBody = JSON.parse(pack.messageBody)
+                const messageInfo = {
+                    isAccept: false,
+                    type: 5,
+                    messageContent: messageBody.content,
+                    messageId: pack.messageId,
+                    messageKey: pack.messageKey || '',
+                    messageTime: pack.messageTime
+                }
+                dispatch(modifyMessageList({
+                    friendId: pack.toId,
+                    messageInfo
+                }))
+                dispatch(syncConversationList([{
+                    toId: pack.toId,
+                    message: messageInfo
+                }]))
             }
         } else {
             if (pc.value) {
-                im.hangUpVideoCall(requestUserId, "我已结束通话")
+                const pack = im.hangUpVideoCall(requestUserId, "通话结束")
+                const messageBody = JSON.parse(pack.messageBody)
+                const messageInfo = {
+                    isAccept: false,
+                    type: 5,
+                    messageContent: messageBody.content,
+                    messageId: pack.messageId,
+                    messageKey: pack.messageKey || '',
+                    messageTime: pack.messageTime
+                }
+                dispatch(modifyMessageList({
+                    friendId: pack.toId,
+                    messageInfo
+                }))
+                dispatch(syncConversationList([{
+                    toId: pack.toId,
+                    message: messageInfo
+                }]))
                 endVideoChat()
             } else {
-                im.rejectVideoCall(requestUserId, "我已拒绝通话")
+                const pack = im.rejectVideoCall(requestUserId, "已拒绝")
+                const messageBody = JSON.parse(pack.messageBody)
+                const messageInfo = {
+                    isAccept: false,
+                    type: 5,
+                    messageContent: messageBody.content,
+                    messageId: pack.messageId,
+                    messageKey: pack.messageKey || '',
+                    messageTime: pack.messageTime
+                }
+                dispatch(modifyMessageList({
+                    friendId: pack.toId,
+                    messageInfo
+                }))
+                dispatch(syncConversationList([{
+                    toId: pack.toId,
+                    message: messageInfo
+                }]))
             }
         }
         onHangOffClicked()
+    }
+
+    const muteRemoteVideo = () => {
+        remoteVideoRef.current.muted = !remoteVideoRef.current.muted
+        setIsRemoteMuted(remoteVideoRef.current.muted)
+        const audioTracks = remoteVideoRef.current.srcObject.getAudioTracks()
+        audioTracks.forEach(track => {
+            track.enabled = !remoteVideoRef.current.muted
+        })
+    }
+
+    const muteLocalVideo = () => {
+        localVideoRef.current.muted = !localVideoRef.current.muted
+        setIsLocalMuted(localVideoRef.current.muted)
+        const audioTracks = localVideoRef.current.srcObject.getAudioTracks()
+        audioTracks.forEach(track => {
+            track.enabled = !localVideoRef.current.muted
+        })
     }
 
     useEffect(() => {
@@ -184,6 +277,24 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
         })
 
         const hangUpCallToken = PubSub.subscribe("HangUpCall", (_, data) => {
+            const messageBody = JSON.parse(data.messageBody)
+            const messageInfo = {
+                isAccept: true,
+                type: 5,
+                messageContent: messageBody.content,
+                messageId: data.messageId,
+                messageKey: data.messageKey || '',
+                messageTime: data.messageTime
+            }
+            dispatch(modifyMessageList({
+                friendId: data.fromId,
+                messageInfo
+            }))
+            dispatch(syncConversationList([{
+                toId: data.fromId,
+                message: messageInfo
+            }]))
+
             if (pc.value) {
                 endVideoChat()
             }
@@ -191,6 +302,23 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
         })
 
         const cancelCallToken = PubSub.subscribe("CancelCall", (_, data) => {
+            const messageBody = JSON.parse(data.messageBody)
+            const messageInfo = {
+                isAccept: true,
+                type: 5,
+                messageContent: '对方' + messageBody.content,
+                messageId: data.messageId,
+                messageKey: data.messageKey || '',
+                messageTime: data.messageTime
+            }
+            dispatch(modifyMessageList({
+                friendId: data.fromId,
+                messageInfo
+            }))
+            dispatch(syncConversationList([{
+                toId: data.fromId,
+                message: messageInfo
+            }]))
             if (pc.value) {
                 endVideoChat()
             }
@@ -198,6 +326,23 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
         })
 
         const rejectCallToken = PubSub.subscribe("RejectCall", (_, data) => {
+            const messageBody = JSON.parse(data.messageBody)
+            const messageInfo = {
+                isAccept: true,
+                type: 5,
+                messageContent: '对方' + messageBody.content,
+                messageId: data.messageId,
+                messageKey: data.messageKey || '',
+                messageTime: data.messageTime
+            }
+            dispatch(modifyMessageList({
+                friendId: data.fromId,
+                messageInfo
+            }))
+            dispatch(syncConversationList([{
+                toId: data.fromId,
+                message: messageInfo
+            }]))
             if (pc.value) {
                 endVideoChat()
             }
@@ -263,8 +408,8 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
             <Actions>
                 {
                     (isAccept || isRequest) && (
-                        <Action>
-                            <FontAwesomeIcon icon={faMicrophone}/>
+                        <Action muted={isLocalMuted}>
+                            <FontAwesomeIcon icon={faMicrophone} onClick={muteLocalVideo}/>
                         </Action>
                     )
                 }
@@ -280,8 +425,8 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
                 }
                 {
                     (isAccept || isRequest) && (
-                        <Action>
-                            <FontAwesomeIcon icon={faVolumeMute}/>
+                        <Action muted={isRemoteMuted}>
+                            <FontAwesomeIcon icon={faVolumeMute} onClick={muteRemoteVideo}/>
                         </Action>
                     )
                 }

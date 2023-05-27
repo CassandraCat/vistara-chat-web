@@ -19,12 +19,13 @@ const Action = styled(Button).attrs({size: "64px"})`
     position: relative;
     z-index: 1000;
     font-size: 32px;
-    color: white;
+    color: ${({theme, muted}) => muted ? 'black' : 'white'};
 
     box-shadow: none;
-    background: ${({theme, type}) =>
-            type === "hangoff" ? theme.red2 :
-                    type === "accept" ? theme.green : theme.grayDark2};
+    background: ${({theme, type, muted}) =>
+            muted ? "white" :
+                    type === "hangoff" ? theme.red2 :
+                            type === "accept" ? theme.green : theme.grayDark2};
     grid-area: ${({type}) => type === 'accept' ? "right" : ""};
 `;
 
@@ -88,16 +89,16 @@ const StyledVideos = styled.div`
 const RemoteVideo = styled.video`
     width: 100%;
     height: 100%;
-    object-fit:fill
+    object-fit: fill
 `
 const LocalVideo = styled.video`
-    position: absolute; 
+    position: absolute;
     top: 0;
     left: 0;
     width: 400px;
     height: 400px;
     z-index: 100;
-    object-fit:fill
+    object-fit: fill
 `
 
 export default StyledVideoCall;

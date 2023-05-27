@@ -14,6 +14,7 @@ import ImageChatBubble from "../ImageChatBubble";
 import {Image} from 'antd';
 import ReactPlayer from 'react-player/lazy'
 import {syncConversationList} from "../../store/festures/conversation/conversationListSlice";
+import {VideoCameraOutlined, VideoCameraTwoTone} from "@ant-design/icons";
 
 
 function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
@@ -117,6 +118,11 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                                         controls
                                     />
                                 </ImageChatBubble>
+                            } else if (message.type === 5) {
+                                return <ChatBubble key={message.messageId}
+                                                   time={formatTime(message.messageTime)}>
+                                    {message.messageContent} <VideoCameraOutlined style={{color: "#181C2F"}}/>
+                                </ChatBubble>
                             }
                         } else {
                             if (message.type === 1) {
@@ -142,6 +148,11 @@ function Conversation({onAvatarClick, onVideoClicked, children, ...rest}) {
                                         controls
                                     />
                                 </MyImageChatBubble>
+                            } else if (message.type === 5) {
+                                return <MyChatBubble key={message.messageId}
+                                                     time={formatTime(message.messageTime)}>
+                                    {message.messageContent} <VideoCameraOutlined style={{color: "white"}}/>
+                                </MyChatBubble>
                             }
                         }
                     })
