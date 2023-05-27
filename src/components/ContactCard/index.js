@@ -9,6 +9,7 @@ import {DeleteOutlined, MehOutlined, UserDeleteOutlined} from "@ant-design/icons
 import {Button, Popconfirm} from "antd";
 import {useDispatch} from "react-redux";
 import {removeFriend} from "../../store/festures/friend/friendListSlice";
+import {syncBlackFriendList} from "../../store/festures/friend/blackFriendListSlice";
 
 function ContactCard({contact, children, ...rest}) {
 
@@ -37,6 +38,7 @@ function ContactCard({contact, children, ...rest}) {
     const blackFriend = () => {
         im.blackFriend(contact.toId)
         dispatch(removeFriend({userId: contact.toId}))
+        dispatch(syncBlackFriendList([{userId: contact.toId}]))
     }
 
     return (

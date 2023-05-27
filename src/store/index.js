@@ -7,6 +7,7 @@ import conversationListReducer from './festures/conversation/conversationListSli
 import friendInfoReducer from './festures/friend/friendInfoSlice'
 import messageContentReducer from './festures/message/messageContentSlice'
 import messageListReducer from './festures/message/messageSlice'
+import blackFriendListReducer from './festures/friend/blackFriendListSlice'
 import {
     persistStore,
     persistReducer,
@@ -23,7 +24,7 @@ const persistConfig = {
     key: 'root',
     storage,
     // 指定哪些reducer数据持久化
-    whitelist: ['userSession', 'userInfo', 'friendList', 'conversationList', 'friendInfo', 'messageList'],
+    whitelist: ['userSession', 'userInfo', 'friendList', 'conversationList', 'friendInfo', 'messageList','blackFriendList'],
 }
 
 const persistedReducer = persistReducer(
@@ -36,7 +37,8 @@ const persistedReducer = persistReducer(
         conversationList: conversationListReducer,
         friendInfo: friendInfoReducer,
         messageContent: messageContentReducer,
-        messageList: messageListReducer
+        messageList: messageListReducer,
+        blackFriendList: blackFriendListReducer
     }),
 )
 

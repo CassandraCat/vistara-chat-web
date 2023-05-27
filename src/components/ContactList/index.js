@@ -51,17 +51,19 @@ function ContactList({children, ...rest}) {
                 friendSequence = result.data.maxSequence
                 window.localStorage.setItem("friendSequence", friendSequence)
             }
-            if (result.data.dataList?.length > 1) {
+            if (result.data.dataList !== null) {
                 friendList.forEach(friend => {
                     result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
                 })
-                result.data.dataList = result.data.dataList.filter(item => item.status !== 2)
-                dispatch(syncFriendList(result.data.dataList))
-                setContacts(prevState => [...prevState, ...result.data.dataList])
-            } else if (result.data.dataList?.length === 1) {
-                setContacts(prevState => {
-                    return prevState.filter(item => item.toId !== result.data.dataList[0].toId)
-                })
+                if (result.data.dataList.length === 1 && (result.data.dataList[0].status === 2 || result.data.dataList[0].black === 2)) {
+                    setContacts(prevState => {
+                        return prevState.filter(item => item.toId !== result.data.dataList[0].toId)
+                    })
+                } else {
+                    result.data.dataList = result.data.dataList.filter(item => item.status !== 2 && item.black !== 2)
+                    dispatch(syncFriendList(result.data.dataList))
+                    setContacts(prevState => [...prevState, ...result.data.dataList])
+                }
             }
         }).catch((error) => {
             throw new Error(error)
