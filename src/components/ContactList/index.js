@@ -51,14 +51,17 @@ function ContactList({children, ...rest}) {
                 friendSequence = result.data.maxSequence
                 window.localStorage.setItem("friendSequence", friendSequence)
             }
-            if (result.data.dataList != null) {
+            if (result.data.dataList?.length > 1) {
                 friendList.forEach(friend => {
                     result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
                 })
-                // setTimeout(() => {
+                result.data.dataList = result.data.dataList.filter(item => item.status !== 2)
                 dispatch(syncFriendList(result.data.dataList))
-                // }, 0)
                 setContacts(prevState => [...prevState, ...result.data.dataList])
+            } else if (result.data.dataList?.length === 1) {
+                setContacts(prevState => {
+                    return prevState.filter(item => item.toId !== result.data.dataList[0].toId)
+                })
             }
         }).catch((error) => {
             throw new Error(error)
@@ -68,7 +71,7 @@ function ContactList({children, ...rest}) {
             PubSub.unsubscribe(addFriendToken)
         }
 
-    }, [friendSequence])
+    }, [friendSequence, friendList])
 
     return (
         <StyledContactList {...rest}>

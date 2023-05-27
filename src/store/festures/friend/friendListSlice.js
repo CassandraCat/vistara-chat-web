@@ -10,10 +10,13 @@ export const friendListSlice = createSlice({
         syncFriendList: (state, action) => {
             // const filteredPayload = action.payload.filter(item => state.some(friend => !_.isEqual(friend, item)));
             return [...state, ...action.payload];
+        },
+        removeFriend: (state, action) => {
+            return state.filter(friend => friend.userId !== action.payload.userId)
         }
     }
 })
 
-export const {syncFriendList} = friendListSlice.actions
+export const {syncFriendList, removeFriend} = friendListSlice.actions
 
 export default friendListSlice.reducer
