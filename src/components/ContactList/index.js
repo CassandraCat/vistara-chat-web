@@ -31,8 +31,15 @@ function ContactList({children, ...rest}) {
 
     useEffect(() => {
 
-        PubSub.subscribe("addFriend", (_, data) => {
-            setContacts(prevState => [...prevState, data])
+        const addFriendToken = PubSub.subscribe("addFriend", (_, data) => {
+            setContacts(prevState => {
+                prevState.forEach(item => {
+                    if (item.toId === data.toId) {
+                        return prevState
+                    }
+                })
+                return [...prevState, data]
+            })
         })
 
         if (friendSequence === null) {
@@ -49,7 +56,7 @@ function ContactList({children, ...rest}) {
                     result.data.dataList = result.data.dataList.filter(item => !_.isEqual(friend, item))
                 })
                 // setTimeout(() => {
-                    dispatch(syncFriendList(result.data.dataList))
+                dispatch(syncFriendList(result.data.dataList))
                 // }, 0)
                 setContacts(prevState => [...prevState, ...result.data.dataList])
             }
@@ -58,7 +65,7 @@ function ContactList({children, ...rest}) {
         })
 
         return () => {
-            console.log('我执行了！！！！！！！')
+            PubSub.unsubscribe(addFriendToken)
         }
 
     }, [friendSequence])
