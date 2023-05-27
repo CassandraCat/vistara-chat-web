@@ -91,11 +91,17 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
     const createPeerConnection = () => {
         pc.value = new RTCPeerConnection(null);
         pc.value.onicecandidate = handleIceCandidate
-        pc.value.onaddstream = handleRemoteStreamAdded
+        pc.value.ontrack = handleRemoteStreamAdded
         for (const trac of myStream.value.getTracks()) {
-            // const constraints = {echoCancellation: true}
-            const sender = pc.value.addTrack(trac, myStream.value)
-            // sender.applyConstraints(constraints)
+            const constraints = {echoCancellation: true}
+            trac.applyConstraints(constraints)
+                .then(() => {
+                    console.log('Applied audio constraints successfully');
+                })
+                .catch(error => {
+                    console.error('Failed to apply audio constraints:', error);
+                });
+            pc.value.addTrack(trac, myStream.value)
         }
     }
 
@@ -110,7 +116,7 @@ function VideoCall({children, isRequest, requestUserId, onHangOffClicked, ...res
     }
 
     const handleRemoteStreamAdded = (event) => {
-        remoteVideoRef.current.srcObject = event.stream
+        remoteVideoRef.current.srcObject = event.streams[0]
     }
 
     const createOfferAndSendMessage = (sessionDescription) => {
